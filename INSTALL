@@ -1,0 +1,11 @@
+SQL
+- create database
+- use edusuckr.sql to make tables
+
+CONFIG
+- rename includes/config.php.sample to includes/config.php
+- edit includes/config.php
+
+CRONTAB
+- add new line 11 * * * * php {edusuckr_root_folder}/suck_now.php to crontab with crontab -e
+- make sure that suck_now.php has permissions (like 775)

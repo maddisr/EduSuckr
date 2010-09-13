@@ -1,0 +1,17 @@
+<?php
+    // Server root
+    DEFINE("SERVER_ROOT", "http://yourserver.com/edusuckr");
+    // MySQL Database
+    DEFINE("DB_USERNAME", "database_user");
+    DEFINE("DB_PASSWORD", "database_password");
+    DEFINE("DB_HOST", "database_host"); // ex: localhost
+    DEFINE("DB_NAME", "database_name"); // ex: edusuckr
+    DEFINE("DB_PREFIX", ""); //ex: edusuckr_
+    //SOAP
+    DEFINE("WS_NAME", "EduSuckrService");
+    DEFINE("WS_URL", SERVER_ROOT."/EduSuckrService");
+    DEFINE("WS_USERNAME", "");
+    DEFINE("WS_PASSWORD", "");
+    // PHP
+    DEFINE("TIME_ZONE", "Europe/Tallinn");
+?>

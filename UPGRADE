@@ -1,0 +1,16 @@
+These database changes is for that case you havn't done modifications yet.
+You don't want to loose data, but you need your db work fine.
+
+alter table prefix_educourses add column start_agregate char(255);
+alter table prefix_educourses add column stop_agregate char(255);
+alter table prefix_posts add column hidden int(1) DEFAULT 0;
+alter table prefix_comments add column hidden int(1) DEFAULT 0;
+
+LATEST CHANGES IN DB
+following tells to db that no duplication in relations tables anymore:
+ALTER IGNORE TABLE prefix_course_rels_comments ADD PRIMARY KEY (course_guid, link);
+ALTER IGNORE TABLE prefix_course_rels_posts ADD PRIMARY KEY (course_guid, link);
+
+
+LATEST LATEST CHANGES
+ALTER IGNORE TABLE prefix_comments ADD COLUMN post_author char(255);

@@ -26,7 +26,9 @@
         }
         
         function setEduCourse($param) {
-            $query = "INSERT into ".DB_PREFIX."educourses (course_guid, title, description, posts, comments, course_tag, course_blog, course_wiki, signup_deadline, course_starting_date, course_ending_date, start_agregate, stop_agregate) values (".$param['course_guid'].",'".$param['title']."','".$param['description']."','".$param['posts']."','".$param['comments']."','".$param['course_tag']."','".$param['course_blog']."','".$param['course_wiki']."','".$param['signup_deadline']."','".$param['course_starting_date']."','".$param['course_ending_date']."','".$param['start_agregate']."','".$param['stop_agregate']."') ON DUPLICATE KEY UPDATE title='".$param['title']."', description='".$param['description']."', posts='".$param['posts']."', comments='".$param['comments']."', course_tag='".$param['course_tag']."', course_blog='".$param['course_blog']."', course_wiki='".$param['course_wiki']."', signup_deadline='".$param['signup_deadline']."', course_starting_date='".$param['course_starting_date']."', course_ending_date='".$param['course_ending_date']."',start_agregate='".$param['start_agregate']."',stop_agregate='".$param['stop_agregate']."'";
+            $title = mysql_real_escape_string($param['title']);
+            $description = mysql_real_escape_string($param['description']);
+            $query = "INSERT into ".DB_PREFIX."educourses (course_guid, title, description, posts, comments, course_tag, course_blog, course_wiki, signup_deadline, course_starting_date, course_ending_date, start_agregate, stop_agregate) values (".$param['course_guid'].",'".$title."','".$description."','".$param['posts']."','".$param['comments']."','".$param['course_tag']."','".$param['course_blog']."','".$param['course_wiki']."','".$param['signup_deadline']."','".$param['course_starting_date']."','".$param['course_ending_date']."','".$param['start_agregate']."','".$param['stop_agregate']."') ON DUPLICATE KEY UPDATE title='".$title."', description='".$description."', posts='".$param['posts']."', comments='".$param['comments']."', course_tag='".$param['course_tag']."', course_blog='".$param['course_blog']."', course_wiki='".$param['course_wiki']."', signup_deadline='".$param['signup_deadline']."', course_starting_date='".$param['course_starting_date']."', course_ending_date='".$param['course_ending_date']."',start_agregate='".$param['start_agregate']."',stop_agregate='".$param['stop_agregate']."'";
             $result = $this->query($query);
             if ($result) {
                 return 1;
@@ -56,7 +58,9 @@
 
         function addParticipant($param) {
             if ($param['participant_id']) {
-                $query = "INSERT into ".DB_PREFIX."participants (participant_guid, course_guid, firstname, lastname, email, blog, posts, comments, blogger_id, status) values (".$param['participant_id'].",".$param['course_guid'].",'".$param['firstname']."','".$param['lastname']."','".$param['email']."','".$param['blog']."','".$param['posts']."','".$param['comments']."','".$param['blogger_id']."','".$param['status']."') ON DUPLICATE KEY UPDATE firstname='".$param['firstname']."', lastname='".$param['lastname']."', email='".$param['email']."', blog='".$param['blog']."', posts='".$param['posts']."', comments='".$param['comments']."', blogger_id='".$param['blogger_id']."', status='".$param['status']."'";
+                $firstname = mysql_real_escape_string($param['firstname']);
+                $lastname = mysql_real_escape_string($param['lastname']);
+                $query = "INSERT into ".DB_PREFIX."participants (participant_guid, course_guid, firstname, lastname, email, blog, posts, comments, blogger_id, status) values (".$param['participant_id'].",".$param['course_guid'].",'".$firstname."','".$lastname."','".$param['email']."','".$param['blog']."','".$param['posts']."','".$param['comments']."','".$param['blogger_id']."','".$param['status']."') ON DUPLICATE KEY UPDATE firstname='".$firstname."', lastname='".$lastname."', email='".$param['email']."', blog='".$param['blog']."', posts='".$param['posts']."', comments='".$param['comments']."', blogger_id='".$param['blogger_id']."', status='".$param['status']."'";
                 return $this->query($query);
             } 
             return 0;
@@ -71,7 +75,9 @@
         }
         
         function setAssignment($param) {
-            $query = "INSERT into ".DB_PREFIX."assignments (assignment_id, course_guid, title, description, blog_post_url, deadline) values (".$param['assignment_id'].",".$param['course_guid'].",'".$param['title']."','".$param['description']."','".$param['blog_post_url']."','".$param['deadline']."') ON DUPLICATE KEY UPDATE title='".$param['title']."', description='".$param['description']."', blog_post_url='".$param['blog_post_url']."', deadline='".$param['deadline']."'";
+            $title = mysql_real_escape_string($param['title']);
+            $description = mysql_real_escape_string($param['description']);
+            $query = "INSERT into ".DB_PREFIX."assignments (assignment_id, course_guid, title, description, blog_post_url, deadline) values (".$param['assignment_id'].",".$param['course_guid'].",'".$title."','".$description."','".$param['blog_post_url']."','".$param['deadline']."') ON DUPLICATE KEY UPDATE title='".$title."', description='".$description."', blog_post_url='".$param['blog_post_url']."', deadline='".$param['deadline']."'";
             $result = $this->query($query);
             if ($result) {
                 return 1;

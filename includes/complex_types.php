@@ -52,7 +52,7 @@
 	    'all',
 	    '',
 	    array(
-	        'participant_id' => array('name' => 'participant_id',
+	        'participant_guid' => array('name' => 'participant_guid',
 		     	'type' => 'xsd:int'),
 		    'course_guid' => array('name' => 'course_guid',
 		     	'type' => 'xsd:int'),

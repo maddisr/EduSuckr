@@ -93,8 +93,17 @@
         
         function writePost($title, $link, $base, $date, $content, $author_name, $blogger_id) {
             global $db;
-            $query = "INSERT into ".DB_PREFIX."posts (link, base, title, date, content, author, blogger_id) values ('".$link."', '".$base."', '".mysql_real_escape_string($title)."', '".$date."', '".mysql_real_escape_string($content)."', '".mysql_real_escape_string($author_name)."', '".$blogger_id."') ON DUPLICATE KEY UPDATE title='".mysql_real_escape_string($title)."', date='".$date."', content='".$content."', author='".mysql_real_escape_string($author_name)."', blogger_id='".$blogger_id."', modified=NOW()";
-            return $db->query($query);  
+            $data = array(
+                'link' => $link,
+                'base' => $base,
+                'title' => $title,
+                'date' => $date,
+                'content' => $content,
+                'author' => $author_name,
+                'blogger_id' => $blogger_id,
+                'modified' => 'NOW()'
+            );
+            return $db->insert(DB_PREFIX."comments", $data, array('link', 'base'));
         }
         
         function writeComment($title, $link, $base, $date, $content, $author_name, $blogger_id) {
@@ -102,8 +111,19 @@
             $pre_query = "SELECT id, author FROM ".DB_PREFIX."posts WHERE '".$link."' LIKE CONCAT(link,'%')";
             $pre_result = $db->query($pre_query);
             $pre_res = mysql_fetch_array($pre_result);
-            $query = "INSERT into ".DB_PREFIX."comments (link, base, title, date, content, author, blogger_id, post_id, post_author) values ('".$link."', '".$base."', '".mysql_real_escape_string($title)."', '".$date."', '".mysql_real_escape_string($content)."', '".mysql_real_escape_string($author_name)."', '".$blogger_id."', '".$pre_res['id']."', '".mysql_real_escape_string($pre_res['author'])."') ON DUPLICATE KEY UPDATE title='".mysql_real_escape_string($title)."', date='".$date."', content='".mysql_real_escape_string($content)."', author='".mysql_real_escape_string($author_name)."', blogger_id='".$blogger_id."', post_id='".$pre_res['id']."', post_author='".mysql_real_escape_string($pre_res['author'])."', modified=NOW()";
-            return $db->query($query);  
+            $data = array(
+                'link' => $link,
+                'base' => $base,
+                'title' => $title,
+                'date' => $date,
+                'content' => $content,
+                'author' => $author_name,
+                'blogger_id' => $blogger_id,
+                'post_id' => $pre_res['id'],
+                'post_author' => $pre_res['author'],
+                'modified' => 'NOW()'
+            );
+            return $db->insert(DB_PREFIX."comments", $data, array('link', 'base'));
         }
     
     }

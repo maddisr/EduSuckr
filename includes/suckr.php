@@ -103,7 +103,7 @@
                 'blogger_id' => $blogger_id,
                 'modified' => 'NOW()'
             );
-            return $db->insert(DB_PREFIX."comments", $data, array('link', 'base'));
+            return $db->insert(DB_PREFIX."posts", $data, array('link', 'base'));
         }
         
         function writeComment($title, $link, $base, $date, $content, $author_name, $blogger_id) {

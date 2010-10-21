@@ -51,7 +51,7 @@
 			}
 			$prev_a_start = (int) $assignment->deadline;
 			// Add one day, so that people would have time till the end of the day
-			$frame_end_ts = (int) $assignment->deadline + 86400;
+			$frame_end_ts = (int) $assignment->deadline + 86399;
 			$i++;
 			// get posts from DB
 			global $db;

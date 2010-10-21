@@ -15,12 +15,15 @@
             $comment_stat_id = $statistics->performSuck("comment");
             global $db;
             $now = time();
-            $query = "(SELECT posts, comments, course_guid, 'Nameless' as fullname FROM ".DB_PREFIX."educourses WHERE !deleted AND start_agregate<=".$now." AND stop_agregate>=".$now.") union all (SELECT p.posts as posts, p.comments as comments, p.course_guid as course_guid, CONCAT(p.firstname, ' ', p.lastname) as fullname FROM ".DB_PREFIX."participants p LEFT JOIN ".DB_PREFIX."educourses c ON p.course_guid=c.course_guid WHERE c.start_agregate<=".$now." AND c.stop_agregate>=".$now.")";
+            $query = "(SELECT posts, comments, course_guid, 'Nameless' as fullname, course_blog as blog FROM ".DB_PREFIX."educourses WHERE !deleted AND start_agregate<=".$now." AND stop_agregate>=".$now.") union all (SELECT p.posts as posts, p.comments as comments, p.course_guid as course_guid, CONCAT(p.firstname, ' ', p.lastname) as fullname, blog FROM ".DB_PREFIX."participants p LEFT JOIN ".DB_PREFIX."educourses c ON p.course_guid=c.course_guid WHERE c.start_agregate<=".$now." AND c.stop_agregate>=".$now.")";
             $result = $db->query($query);
             $posts_count = 0;
             $comments_count = 0;
             if(mysql_num_rows($result)) {
                 while($feed = mysql_fetch_assoc($result)) {
+                    if (!SILENT_MODE) {
+                        echo "Course: ".$feed['blog']." (".$feed['course_guid'].") by ".$feed['fullname']."<br />";
+                    }
                     $posts_count = $posts_count + $this->suckFeed($feed['posts'], $feed['course_guid'], $feed['fullname'], "post");
                     $comments_count = $comments_count + $this->suckFeed($feed['comments'], $feed['course_guid'], $feed['fullname'], "comment");
                 }

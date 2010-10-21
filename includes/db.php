@@ -170,7 +170,7 @@
         function getCommentsByPost($post) {
             $comments = array();
             if ($post) {
-                $query = "SELECT id, link, title, content, date, author, blogger_id, base, post_id, post_author FROM ".DB_PREFIX."comments WHERE post_id=".$post." ORDER BY date ASC";
+                $query = "SELECT id, link, title, content, date, author, blogger_id, base, post_id, post_author FROM ".DB_PREFIX."comments WHERE post_id=".$post." AND !hidden ORDER BY date ASC";
                 $result = $this->query($query);
                 while($comment = mysql_fetch_array($result)) {
                     if ($comment['blogger_id']) {

@@ -86,7 +86,7 @@
 		foreach ($participants as $key => $participant) {
 	        $participant_blog_url = $participant->blog;
 			$all_participants[] = $participant->firstname . ' ' . $participant->lastname;
-	        $query = "SELECT * FROM ".DB_PREFIX."posts pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid;
+	        $query = "SELECT * FROM ".DB_PREFIX."posts pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid." AND !hidden";
 	        //return $query;
             $result = $db->query($query);
             while($item = mysql_fetch_object($result)) {
@@ -96,7 +96,7 @@
 					$connected_participants[] = $item->firstname . ' ' . $item->lastname;
 			    $educourse_connections[] = array('person' => $item->firstname . ' ' . $item->lastname , 'links' => $participant->firstname . ' ' . $participant->lastname, 'size' => 1);
 		    }
-		    $query = "SELECT * FROM ".DB_PREFIX."comments pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid;
+		    $query = "SELECT * FROM ".DB_PREFIX."comments pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid." AND !hidden";
             $result = $db->query($query);
             while($item = mysql_fetch_object($result)) {
 		        if (!in_array($participant->firstname . ' ' . $participant->lastname, $connected_participants))

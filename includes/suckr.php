@@ -81,7 +81,7 @@
         
         function writePostRelation($course, $link) {
             if (!SILENT_MODE) {
-                echo "Post: ".$link." is related to course: ".$couse;
+                echo "Post: ".$link." is related to course: ".$course."<br />";
             }
             global $db;
             $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_posts (course_guid, link) values (".$course.", '".$link."')";
@@ -90,7 +90,7 @@
         
         function writeCommentRelation($course, $link) {
             if (!SILENT_MODE) {
-                echo "Comment: ".$link." is related to course: ".$couse;
+                echo "Comment: ".$link." is related to course: ".$course."<br />";
             }
             global $db;
             $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_comments (course_guid, link) values (".$course.", '".$link."')";

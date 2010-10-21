@@ -54,13 +54,13 @@
 			$i++;
 			// get posts from DB
 			global $db;
-            $query = "SELECT * FROM ".DB_PREFIX."posts WHERE content LIKE '%".mysql_real_escape_string($assignment->blog_post_url)."%' AND link LIKE '".mysql_real_escape_string($posts_url)."%' ORDER BY date DESC";
+            $query = "SELECT * FROM ".DB_PREFIX."posts WHERE content LIKE '%".mysql_real_escape_string($assignment->blog_post_url)."%' AND link LIKE '".mysql_real_escape_string($posts_url)."%' AND !hidden ORDER BY date DESC";
             $result = $db->query($query);
             if( mysql_num_rows($result) ) {
                 $item = mysql_fetch_object($result);
 	            $returned[$key] = array('state' => 2, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
             } else {
-                $query = "SELECT * FROM ".DB_PREFIX."posts WHERE link LIKE '".mysql_real_escape_string($posts_url)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." ORDER BY date DESC";
+                $query = "SELECT * FROM ".DB_PREFIX."posts WHERE link LIKE '".mysql_real_escape_string($posts_url)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." AND !hidden ORDER BY date DESC";
                 $result = $db->query($query);
                 if( mysql_num_rows($result) ) {
                     $item = mysql_fetch_object($result);

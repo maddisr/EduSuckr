@@ -14,3 +14,11 @@ ALTER IGNORE TABLE prefix_course_rels_posts ADD PRIMARY KEY (course_guid, link);
 
 LATEST LATEST CHANGES
 ALTER IGNORE TABLE prefix_comments ADD COLUMN post_author char(255);
+
+more latest latest:
+alter table prefix_educourses modify column start_agregate bigint(20);
+alter table prefix_educourses modify column stop_agregate bigint(20);
+alter table prefix_educourses modify column signup_deadline bigint(20);
+alter table prefix_educourses modify column course_starting_date bigint(20);
+alter table prefix_educourses modify column course_ending_date bigint(20);
+alter table prefix_assignments modify column deadline bigint(20);

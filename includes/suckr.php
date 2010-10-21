@@ -47,11 +47,11 @@
 		    $items = $feed->get_items(0, 0);
 		   
 			foreach ($items as $item) {
-			    $title = mysql_real_escape_string($item->get_title());
-			    $link = mysql_real_escape_string($item->get_permalink());
-			    $date = mysql_real_escape_string($item->get_date('U'));
-			    $content = mysql_real_escape_string($item->get_content());
-			    $base = mysql_real_escape_string($item->get_base());
+			    $title = $item->get_title();
+			    $link = $item->get_permalink();
+			    $date = $item->get_date('U');
+			    $content = $item->get_content();
+			    $base = $item->get_base();
 			    $author_name = $author;
 	            $f_author = $item->get_author();
 	            $blogger_id = 0;

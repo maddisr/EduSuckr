@@ -10,13 +10,13 @@ CREATE TABLE IF NOT EXISTS prefix_educourses (
     course_tag char(255),
     course_blog char(255),
     course_wiki char(255),
-    signup_deadline char(255),
-    course_starting_date char(255),
-    course_ending_date char(255),
+    signup_deadline bigint(20),
+    course_starting_date bigint(20),
+    course_ending_date bigint(20),
     created TIMESTAMP DEFAULT NOW(),
     modified TIMESTAMP,
-    start_agregate char(255),
-    stop_agregate char(255),
+    start_agregate bigint(20),
+    stop_agregate bigint(20),
     deleted boolean DEFAULT 0   
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS prefix_assignments (
     title char(255),
     description char(255),
     blog_post_url char(255),
-    deadline char(255),
+    deadline bigint(20),
     created TIMESTAMP DEFAULT NOW(),
     modified TIMESTAMP,
     FOREIGN KEY (course_guid) REFERENCES prefix_educourses (course_guid) ON DELETE CASCADE

@@ -14,4 +14,6 @@
     DEFINE("WS_PASSWORD", "");
     // PHP
     DEFINE("TIME_ZONE", "Europe/Tallinn");
+    // EduSuckr
+    DEFINE("SILENT_MODE", true);
 ?>

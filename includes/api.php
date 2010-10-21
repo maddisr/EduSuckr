@@ -44,10 +44,9 @@
 			$returned[$key] = array('state' => 0);
 			$timeframe_empty = true;
 			$timeframe_result = array('state' => 1);
+			$frame_start_ts = $prev_a_start;
 			if ($i == 0) {
 				$frame_start_ts = $course_starting_date;
-			} else {
-				$frame_start_ts = $prev_a_start;
 			}
 			$prev_a_start = (int) $assignment->deadline;
 			// Add one day, so that people would have time till the end of the day
@@ -61,7 +60,7 @@
                 $item = mysql_fetch_object($result);
 	            $returned[$key] = array('state' => 2, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
             } else {
-                $query = "SELECT * FROM ".DB_PREFIX."posts WHERE link LIKE '".mysql_real_escape_string($posts_url)."%' AND date>=".$frame_start_ts." AND date<=".$frame_end_ts." ORDER BY date DESC";
+                $query = "SELECT * FROM ".DB_PREFIX."posts WHERE link LIKE '".mysql_real_escape_string($posts_url)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." ORDER BY date DESC";
                 $result = $db->query($query);
                 if( mysql_num_rows($result) ) {
                     $item = mysql_fetch_object($result);

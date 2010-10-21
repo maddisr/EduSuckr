@@ -48,7 +48,7 @@
 			if ($i == 0) {
 				$frame_start_ts = $course_starting_date;
 			}
-			$prev_a_start = (int) $assignment->deadline + 86399;
+			$prev_a_start = (int) $assignment->deadline + 86400;
 			// Add one day, so that people would have time till the end of the day
 			$frame_end_ts = (int) $assignment->deadline + 86399;
 			$i++;

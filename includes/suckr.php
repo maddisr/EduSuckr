@@ -77,7 +77,7 @@
                     } else {
                         $ok = "ok";
                         $desc_start = substr($item->get_description(), 0, 5);
-                        if (strcmp($desc_start, "[…]")) {
+                        if (!strcmp($desc_start, "[…]")) {
                             $ok = "not";
                         }
                         $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);
@@ -85,7 +85,7 @@
                         if ($comment_written && $comment_rel_written) {
                             $success++;
                             if (!SILENT_MODE) {
-                                echo "Related comment: ".$link." was added or updated in database - Status ".$ok."<br />";
+                                echo "Related comment: ".$link." was added or updated in database - Status ".$ok." and ".$desc_start."<br />";
                             }
                         }
                     }

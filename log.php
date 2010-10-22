@@ -14,6 +14,7 @@
 	</head>
 	<body>
     <h1>EduSuckr Log</h1>
+    <br /><a href="stats.php">back</a>
     <?php
     if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         echo $statistics->readLog($_GET['id']);
@@ -21,5 +22,5 @@
         echo "No log with that id!";    
     }
     ?>
-    <a href="stats.php">back</a>
+    <br /><a href="stats.php">back</a>
 </html>

@@ -97,6 +97,8 @@
                                 $status = "<span style='color:green'>was added or updated in database</span>";
                             }
                         }
+                    } else {
+                        $status = "<span style='color:red'>was not added or updated in database because missing data: title='".$title."' && link='".$link."' && date='".$date."' && content='".substr($content, 0, 20)."'</span>";    
                     }
                 }
                 if (!SILENT_MODE) {

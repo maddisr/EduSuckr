@@ -66,7 +66,7 @@
 	            }
                 if ($title && $link && $date && $content) {
                     if ($type=="post") {
-                        $status = "<span style='color:red'>was not added or updated in database because </span> ".$date." < ".$start;
+                        $status = "<span style='color:red'>was not suitable, it has been written earlier than course started</span> ";
                         if ($start<=$date) {
                             $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id);
                             $post_rel_written = $this->writePostRelation($course, $link);
@@ -78,10 +78,13 @@
                         if (!SILENT_MODE) {
                             echo "Related post: ".$link." - ".$status."<br />";
                         }
-                    } else {  
+                    } else {
                         $status = "<span style='color:red'>was not suitable, it is probably pingback</span>";
+                        if ($start>$date) {
+                            $status = "<span style='color:red'>was not suitable, it has been written earlier than course started</span>";
+                        }                        
                         $desc_start = substr($item->get_description(), 0, 5);
-                        if (strcmp($desc_start, "[...]")) {
+                        if ($start<=$date && strcmp($desc_start, "[...]")) {
                             $status = "<span style='color:green'>was added or updated in database</span>";
                             $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);
                             $comment_rel_written = $this->writeCommentRelation($course, $link);

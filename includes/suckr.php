@@ -56,46 +56,51 @@
 	            $f_author = $item->get_author();
 	            $blogger_id = 0;
 	            $f_author_name = 0;
-	            if (is_object($f_author)) {
-	                $f_author_name = $f_author->get_name();
-	                if (!$f_author_name) $f_author_name = 0;
-	                preg_match('@^(?:http://www.blogger.com/profile/)?([^/]+)@i', $f_author->get_link(), $matches);	                
-	                if (count($matches)>1 && is_numeric($matches[1])) {
-	                    $blogger_id = $matches[1];
+	            $hidden = 0;
+	            $status = "<span style='color:red'>was not added or updated in database due unknown problem</span>";
+                if ($start>$date) {
+                    $status = "<span style='color:red'>was not suitable, it has been written earlier than course started</span>";
+                } else if (!strcmp(substr($item->get_description(), 0, 5), "[...]"))   {                      
+                    $status = "<span style='color:red'>was not suitable, it is probably pingback</span>";
+                } else {   
+	                if (is_object($f_author)) {
+	                    $f_author_name = $f_author->get_name();
+	                    if (!$f_author_name) $f_author_name = 0;
+	                    preg_match('@^(?:http://www.blogger.com/profile/)?([^/]+)@i', $f_author->get_link(), $matches);	                
+	                    if (count($matches)>1 && is_numeric($matches[1])) {
+	                        $blogger_id = $matches[1];
+	                    }
 	                }
-	            }
-                if ($title && $link && $date && $content) {
-                    if ($type=="post") {
-                        $status = "<span style='color:red'>was not suitable, it has been written earlier than course started</span> ";
-                        if ($start<=$date) {
-                            $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id);
+                    if ($title && $link && $date && $content) {
+                        if ($type=="post") {
+                            preg_match('/This is your first post./', $post, $matches);
+                            if (count($matches)>1 && strcmp($matches[1], "This is your first post.")) {
+                                $status .= " this is probably wordpress default post, and will be hidden";
+                                $hidden = 1;
+                            }
+                            $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id, $hidden);
                             $post_rel_written = $this->writePostRelation($course, $link);
                             if ($post_written && $post_rel_written) {
-                                 $success++;
-                                 $status = "<span style='color:green'>was added or updated in database</span>";
+                                $success++;
+                                $status = "<span style='color:green'>was added or updated in database</span>";
                             }
-                        }
-                        if (!SILENT_MODE) {
-                            echo "Related post: ".$link." - ".$status."<br />";
-                        }
-                    } else {
-                        $status = "<span style='color:red'>was not suitable, it is probably pingback</span>";
-                        if ($start>$date) {
-                            $status = "<span style='color:red'>was not suitable, it has been written earlier than course started</span>";
-                        }                        
-                        $desc_start = substr($item->get_description(), 0, 5);
-                        if ($start<=$date && strcmp($desc_start, "[...]")) {
-                            $status = "<span style='color:green'>was added or updated in database</span>";
-                            $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);
+                        } else {
+                            preg_match('/Hi, this is a comment./', $comment, $matches);
+                            if (count($matches)>1 && strcmp($matches[1], "Hi, this is a comment.")) {
+                                $status .= " this is probably wordpress default comment, and will be hidden";
+                                $hidden = 1;
+                            }
+                            $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id, $hidden);
                             $comment_rel_written = $this->writeCommentRelation($course, $link);
                             if ($comment_written && $comment_rel_written) {
                                 $success++;
-                            }      
-                        }
-                        if (!SILENT_MODE) {
-                            echo "Related comment: ".$link." - ".$status."<br />";
+                                $status = "<span style='color:green'>was added or updated in database</span>";
+                            }
                         }
                     }
+                }
+                if (!SILENT_MODE) {
+                    echo "Related ".$type.": ".$link." - ".$status."<br />";
                 }
 			}
 		    // destroy feed
@@ -116,7 +121,7 @@
             return $db->query($query);  
         }
         
-        function writePost($title, $link, $base, $date, $content, $author_name, $blogger_id) {
+        function writePost($title, $link, $base, $date, $content, $author_name, $blogger_id, $hidden) {
             global $db;
             $data = array(
                 'link' => $link,
@@ -126,12 +131,13 @@
                 'content' => $content,
                 'author' => $author_name,
                 'blogger_id' => $blogger_id,
-                'modified' => 'NOW()'
+                'modified' => 'NOW()',
+                'hidden' => $hidden
             );
             return $db->insert(DB_PREFIX."posts", $data, array('link', 'base'));
         }
         
-        function writeComment($title, $link, $base, $date, $content, $author_name, $blogger_id) {
+        function writeComment($title, $link, $base, $date, $content, $author_name, $blogger_id, $hidden) {
             global $db;
             $pre_query = "SELECT id, author FROM ".DB_PREFIX."posts WHERE '".$link."' LIKE CONCAT(link,'%')";
             $pre_result = $db->query($pre_query);
@@ -146,7 +152,8 @@
                 'blogger_id' => $blogger_id,
                 'post_id' => $pre_res['id'],
                 'post_author' => $pre_res['author'],
-                'modified' => 'NOW()'
+                'modified' => 'NOW()',
+                'hidden' => $hidden
             );
             return $db->insert(DB_PREFIX."comments", $data, array('link', 'base'));
         }

@@ -100,5 +100,12 @@ CREATE TABLE IF NOT EXISTS prefix_statistics (
     completed TIMESTAMP,
     error int(1) DEFAULT 0,
     count bigint(20),
+    log int(5),
     type enum ('post','comment') NOT NULL DEFAULT 'post'
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+CREATE TABLE IF NOT EXISTS prefix_log (
+    id int(5) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    created TIMESTAMP DEFAULT NOW(),
+    log TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

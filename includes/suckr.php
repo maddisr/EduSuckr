@@ -9,6 +9,8 @@
     require_once("statistics.php");
     class Suckr {
         
+        $out = "";
+        
         function suckBlogs() {
             $statistics = new Statistics;
             $post_stat_id = $statistics->performSuck("post");
@@ -21,15 +23,19 @@
             $comments_count = 0;
             if(mysql_num_rows($result)) {
                 while($feed = mysql_fetch_assoc($result)) {
-                    if (!SILENT_MODE) {
-                        echo "<h3>Course: ".$feed['blog']." (".$feed['course_guid'].") by ".$feed['fullname']."</h3>";
-                    }
+                    $this->out .= "<h3>Course: ".$feed['blog']." (".$feed['course_guid'].") by ".$feed['fullname']."</h3>";
                     $posts_count = $posts_count + $this->suckFeed($feed['posts'], $feed['course_guid'], $feed['fullname'], $feed['start'], "post");
                     $comments_count = $comments_count + $this->suckFeed($feed['comments'], $feed['course_guid'], $feed['fullname'], $feed['start'], "comment");
                 }
             }
-            $statistics->completeSuck($post_stat_id, $posts_count);
-            $statistics->completeSuck($comment_stat_id, $comments_count);
+            $log = $statistics->writeLog($this->out);
+            if ($log) {
+                $statistics->completeSuck($post_stat_id, $posts_count, $log);
+                $statistics->completeSuck($comment_stat_id, $comments_count, $log);
+            }
+            if (!SILENT_MODE) {
+                echo $this->out;
+            }
         }
         
         function suckFeed($feed_url, $course, $author, $start, $type="post") {
@@ -106,9 +112,7 @@
                         $status .= "</span>";    
                     }
                 }
-                if (!SILENT_MODE) {
-                    echo "Related ".$type.": ".$link." - ".$status."<br />";
-                }
+                $this->out .= "Related ".$type.": ".$link." - ".$status."<br />";
 			}
 		    // destroy feed
 		    $feed->__destruct();

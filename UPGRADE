@@ -22,3 +22,11 @@ alter table prefix_educourses modify column signup_deadline bigint(20);
 alter table prefix_educourses modify column course_starting_date bigint(20);
 alter table prefix_educourses modify column course_ending_date bigint(20);
 alter table prefix_assignments modify column deadline bigint(20);
+
+more latest latest latest:
+CREATE TABLE IF NOT EXISTS prefix_log (
+    id int(5) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    created TIMESTAMP DEFAULT NOW(),
+    log TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+alter table prod_statistics add column log int(5);

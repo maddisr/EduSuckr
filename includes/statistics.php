@@ -29,12 +29,22 @@ class Statistics {
         }
         return 0;
     }
-    function completeSuck($id, $count) {
+    function completeSuck($id, $count, $log) {
         global $db;
-        $query = "UPDATE ".DB_PREFIX."statistics set completed=NOW(), count=".$count.", error=0 WHERE id=".$id;
+        $query = "UPDATE ".DB_PREFIX."statistics set completed=NOW(), count=".$count.", log=".$log." error=0 WHERE id=".$id;
         $result = $db->query($query);
         if ($result) {
             return 1;
+        }
+        return 0;
+    }
+    
+    function writeLog($type) {
+        global $db;
+        $query = "INSERT into ".DB_PREFIX."log (log) values ('".$log."')";
+        $result = $db->query($query);
+        if ($result) {
+            return mysql_insert_id();
         }
         return 0;
     }

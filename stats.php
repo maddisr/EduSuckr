@@ -15,7 +15,7 @@
 	<body>
     <h1>EduSuckr Statistics</h1>
     <table>
-        <tr><th></th><th>performed</th><th>completed</th><th>lasts</th><th>count</th></tr>
+        <tr><th></th><th>performed</th><th>completed</th><th>lasts</th><th>count</th><th>log</th></tr>
 <?php
     foreach ($statistics->getLastPerformedSuck("post") as $lps) {
         $lasts="";
@@ -24,7 +24,7 @@
             $completed = $lps['completed'];
             $lasts = strtotime($lps['completed'])-strtotime($lps['performed']);
         }
-        echo '<tr><td>Posts</td><td>'.$lps['performed'].'</td><td>'.$completed.'</td><td>'.$lasts.'</td><td>'.$lps['count'].'</td></tr>';
+        echo '<tr><td>Posts</td><td>'.$lps['performed'].'</td><td>'.$completed.'</td><td>'.$lasts.'</td><td>'.$lps['count'].'</td><td><a href="log.php?id='.$lps['log'].'">view</a>'</td></tr>';
     }
     foreach ($statistics->getLastPerformedSuck("comment") as $lps) {
         $lasts="";
@@ -33,7 +33,7 @@
             $completed = $lps['completed'];
             $lasts = strtotime($lps['completed'])-strtotime($lps['performed']);
         }
-        echo '<tr><td>Comments</td><td>'.$lps['performed'].'</td><td>'.$completed.'</td><td>'.$lasts.'</td><td>'.$lps['count'].'</td></tr>';
+        echo '<tr><td>Comments</td><td>'.$lps['performed'].'</td><td>'.$completed.'</td><td>'.$lasts.'</td><td>'.$lps['count'].'</td><td><a href="log.php?id='.$lps['log'].'">view</a>'</td></tr>';
     }
 ?>
     </table>

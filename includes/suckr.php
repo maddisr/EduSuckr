@@ -15,7 +15,7 @@
             $comment_stat_id = $statistics->performSuck("comment");
             global $db;
             $now = time();
-            $query = "(SELECT posts, comments, course_guid, 'Nameless' as fullname, course_blog as blog, course_starting_date as start FROM ".DB_PREFIX."educourses WHERE !deleted AND start_agregate<=".$now." AND stop_agregate>=".$now.") union all (SELECT p.posts as posts, p.comments as comments, p.course_guid as course_guid, CONCAT(p.firstname, ' ', p.lastname) as fullname, blog, c.course_starting_date as start FROM ".DB_PREFIX."participants p LEFT JOIN ".DB_PREFIX."educourses c ON p.course_guid=c.course_guid WHERE c.start_agregate<=".$now." AND c.stop_agregate>=".$now.")";
+            $query = "(SELECT posts, comments, course_guid, 'Nameless' as fullname, course_blog as blog, start_agregate as start FROM ".DB_PREFIX."educourses WHERE !deleted AND start_agregate<=".$now." AND stop_agregate>=".$now.") union all (SELECT p.posts as posts, p.comments as comments, p.course_guid as course_guid, CONCAT(p.firstname, ' ', p.lastname) as fullname, blog, c.start_agregate as start FROM ".DB_PREFIX."participants p LEFT JOIN ".DB_PREFIX."educourses c ON p.course_guid=c.course_guid WHERE c.start_agregate<=".$now." AND c.stop_agregate>=".$now.")";
             $result = $db->query($query);
             $posts_count = 0;
             $comments_count = 0;

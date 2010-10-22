@@ -22,7 +22,7 @@
             if(mysql_num_rows($result)) {
                 while($feed = mysql_fetch_assoc($result)) {
                     if (!SILENT_MODE) {
-                        echo "Course: ".$feed['blog']." (".$feed['course_guid'].") by ".$feed['fullname']."<br />";
+                        echo "<h3>Course: ".$feed['blog']." (".$feed['course_guid'].") by ".$feed['fullname']."</h3>";
                     }
                     $posts_count = $posts_count + $this->suckFeed($feed['posts'], $feed['course_guid'], $feed['fullname'], "post");
                     $comments_count = $comments_count + $this->suckFeed($feed['comments'], $feed['course_guid'], $feed['fullname'], "comment");
@@ -71,22 +71,22 @@
                         if ($post_written && $post_rel_written) {
                              $success++;
                              if (!SILENT_MODE) {
-                                 echo "Related post: ".$link." was added or updated in database<br />";
+                                 echo "Related post: ".$link." - <span style='color:green'>was added or updated in database</span><br />";
                              }
                         }
-                    } else {
-                        $status = "<span style='color:green'>was added or updated in database</span>";
+                    } else {  
+                        $status = "<span style='color:red'>was not suitable, it is probably pingback</span>";
                         $desc_start = substr($item->get_description(), 0, 5);
-                        if (!strcmp($desc_start, "[...]")) {
-                            $status = "<span style='color:red'>was not suitable, it is probably pingback</span>";
-                        }
-                        $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);
-                        $comment_rel_written = $this->writeCommentRelation($course, $link);
-                        if ($comment_written && $comment_rel_written) {
-                            $success++;
-                            if (!SILENT_MODE) {
-                                echo "Related comment: ".$link." - ".$status."<br />";
-                            }
+                        if (strcmp($desc_start, "[...]")) {
+                            $status = "<span style='color:green'>was added or updated in database</span>";
+                            $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);
+                            $comment_rel_written = $this->writeCommentRelation($course, $link);
+                            if ($comment_written && $comment_rel_written) {
+                                $success++;
+                               if (!SILENT_MODE) {
+                                    echo "Related comment: ".$link." - ".$status."<br />";
+                                }
+                            }      
                         }
                     }
                 }

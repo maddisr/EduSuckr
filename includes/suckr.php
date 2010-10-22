@@ -68,11 +68,13 @@
                     if ($type=="post") {
                         $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id);
                         $post_rel_written = $this->writePostRelation($course, $link);
+                        $status = "<span style='color:red'>was not added or updated in database</span>";
                         if ($post_written && $post_rel_written) {
                              $success++;
-                             if (!SILENT_MODE) {
-                                 echo "Related post: ".$link." - <span style='color:green'>was added or updated in database</span><br />";
-                             }
+                             $status = "<span style='color:green'>was added or updated in database</span>";
+                        }
+                        if (!SILENT_MODE) {
+                            echo "Related post: ".$link." - ".$status."<br />";
                         }
                     } else {  
                         $status = "<span style='color:red'>was not suitable, it is probably pingback</span>";
@@ -83,10 +85,10 @@
                             $comment_rel_written = $this->writeCommentRelation($course, $link);
                             if ($comment_written && $comment_rel_written) {
                                 $success++;
-                               if (!SILENT_MODE) {
-                                    echo "Related comment: ".$link." - ".$status."<br />";
-                                }
                             }      
+                        }
+                        if (!SILENT_MODE) {
+                            echo "Related comment: ".$link." - ".$status."<br />";
                         }
                     }
                 }

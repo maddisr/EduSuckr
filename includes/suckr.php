@@ -9,7 +9,7 @@
     require_once("statistics.php");
     class Suckr {
         
-        $out = "";
+        public $out = "";
         
         function suckBlogs() {
             $statistics = new Statistics;

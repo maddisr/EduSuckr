@@ -31,7 +31,7 @@ class Statistics {
     }
     function completeSuck($id, $count, $log) {
         global $db;
-        $query = "UPDATE ".DB_PREFIX."statistics set completed=NOW(), count=".$count.", log=".$log." error=0 WHERE id=".$id;
+        $query = "UPDATE ".DB_PREFIX."statistics set completed=NOW(), count=".$count.", log='".$log."', error=0 WHERE id=".$id;
         $result = $db->query($query);
         if ($result) {
             return 1;
@@ -47,6 +47,18 @@ class Statistics {
             return mysql_insert_id();
         }
         return 0;
+    }
+    
+    function readLog($id) {
+        global $db;
+        $query = "SELECT log FROM ".DB_PREFIX."log WHERE id='".$id;
+        $result = $db->query($query);
+        if(mysql_num_rows($result)) {
+            while($stat = mysql_fetch_array($result)) {
+                return $stat[0];
+            }
+        }  
+        return "No log with this id!";  
     }
 }
 ?>

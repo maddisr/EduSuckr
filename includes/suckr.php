@@ -77,7 +77,7 @@
                     } else {
                         $ok = "ok";
                         $desc_start = substr($item->get_description(), 0, 5);
-                        if (!strcmp($desc_start, "[…]")) {
+                        if (!strcmp($desc_start, "[...]")) {
                             $ok = "not";
                         }
                         $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);

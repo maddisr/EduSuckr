@@ -98,7 +98,12 @@
                             }
                         }
                     } else {
-                        $status = "<span style='color:red'>was not added or updated in database because missing data: title='".$title."' && link='".$link."' && date='".$date."' && content='".substr($content, 0, 20)."'</span>";    
+                        $status = "<span style='color:red'>was not added or updated in database because missing data: ";
+                        if (!$title) $status .= "TITLE ";
+                        if (!$link) $status .= "LINK ";
+                        if (!$date) $status .= "DATE ";
+                        if (!$content) $status .= "CONTENT ";
+                        $status .= "</span>";    
                     }
                 }
                 if (!SILENT_MODE) {

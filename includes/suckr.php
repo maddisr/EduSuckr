@@ -75,17 +75,17 @@
                              }
                         }
                     } else {
-                        $ok = "ok";
+                        $status = "<span style='color:green'>was added or updated in database</span>";
                         $desc_start = substr($item->get_description(), 0, 5);
                         if (!strcmp($desc_start, "[...]")) {
-                            $ok = "not";
+                            $status = "<span style='color:red'>was not suitable, it is probably pingback</span>";
                         }
                         $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);
                         $comment_rel_written = $this->writeCommentRelation($course, $link);
                         if ($comment_written && $comment_rel_written) {
                             $success++;
                             if (!SILENT_MODE) {
-                                echo "Related comment: ".$link." was added or updated in database - Status ".$ok." and ".$desc_start."<br />";
+                                echo "Related comment: ".$link." - ".$status."<br />";
                             }
                         }
                     }

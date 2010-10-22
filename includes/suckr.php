@@ -68,11 +68,26 @@
                     if ($type=="post") {
                         $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id);
                         $post_rel_written = $this->writePostRelation($course, $link);
-                        if ($post_written && $post_rel_written) $success++;
+                        if ($post_written && $post_rel_written) {
+                             $success++;
+                             if (!SILENT_MODE) {
+                                 echo "Related post: ".$link." was added or updated in database<br />";
+                             }
+                        }
                     } else {
+                        $ok = "ok";
+                        $desc_start = substr($item->get_description(), 0, 5);
+                        if (strcpm($desc_start, "[…]")) {
+                            $ok = "not";
+                        }
                         $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id);
                         $comment_rel_written = $this->writeCommentRelation($course, $link);
-                        if ($comment_written && $comment_rel_written) $success++;
+                        if ($comment_written && $comment_rel_written) {
+                            $success++;
+                            if (!SILENT_MODE) {
+                                echo "Related comment: ".$link." was added or updated in database - Status ".$ok."<br />";
+                            }
+                        }
                     }
                 }
 			}
@@ -83,18 +98,12 @@
         }
         
         function writePostRelation($course, $link) {
-            if (!SILENT_MODE) {
-                echo "Post: ".$link." is related to course: ".$course."<br />";
-            }
             global $db;
             $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_posts (course_guid, link) values (".$course.", '".$link."')";
             return $db->query($query);  
         }
         
         function writeCommentRelation($course, $link) {
-            if (!SILENT_MODE) {
-                echo "Comment: ".$link." is related to course: ".$course."<br />";
-            }
             global $db;
             $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_comments (course_guid, link) values (".$course.", '".$link."')";
             return $db->query($query);  

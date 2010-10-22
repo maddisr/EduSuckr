@@ -21,4 +21,5 @@
         echo "No log with that id!";    
     }
     ?>
+    <a href="stats.php">back</a>
 </html>

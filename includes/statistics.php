@@ -39,9 +39,9 @@ class Statistics {
         return 0;
     }
     
-    function writeLog($type) {
+    function writeLog($log) {
         global $db;
-        $query = "INSERT into ".DB_PREFIX."log (log) values ('".$log."')";
+        $query = "INSERT into ".DB_PREFIX."log (log) values ('".mysql_real_escape_string($log)."')";
         $result = $db->query($query);
         if ($result) {
             return mysql_insert_id();
@@ -51,14 +51,14 @@ class Statistics {
     
     function readLog($id) {
         global $db;
-        $query = "SELECT log FROM ".DB_PREFIX."log WHERE id='".$id;
+        $query = "SELECT log FROM ".DB_PREFIX."log WHERE id=".$id;
         $result = $db->query($query);
         if(mysql_num_rows($result)) {
             while($stat = mysql_fetch_array($result)) {
                 return $stat[0];
             }
         }  
-        return "No log with this id!";  
+        return "No log recorded with this id!";  
     }
 }
 ?>

@@ -15,7 +15,7 @@
             $comment_stat_id = $statistics->performSuck("comment");
             global $db;
             $now = time();
-            $query = "(SELECT posts, comments, course_guid, 'Nameless' as fullname, course_blog as blog FROM ".DB_PREFIX."educourses WHERE !deleted AND start_agregate<=".$now." AND stop_agregate>=".$now.") union all (SELECT p.posts as posts, p.comments as comments, p.course_guid as course_guid, CONCAT(p.firstname, ' ', p.lastname) as fullname, blog FROM ".DB_PREFIX."participants p LEFT JOIN ".DB_PREFIX."educourses c ON p.course_guid=c.course_guid WHERE c.start_agregate<=".$now." AND c.stop_agregate>=".$now.")";
+            $query = "(SELECT posts, comments, course_guid, 'Nameless' as fullname, course_blog as blog, course_starting_date as start FROM ".DB_PREFIX."educourses WHERE !deleted AND start_agregate<=".$now." AND stop_agregate>=".$now.") union all (SELECT p.posts as posts, p.comments as comments, p.course_guid as course_guid, CONCAT(p.firstname, ' ', p.lastname) as fullname, blog, c.course_starting_date as start FROM ".DB_PREFIX."participants p LEFT JOIN ".DB_PREFIX."educourses c ON p.course_guid=c.course_guid WHERE c.start_agregate<=".$now." AND c.stop_agregate>=".$now.")";
             $result = $db->query($query);
             $posts_count = 0;
             $comments_count = 0;
@@ -24,15 +24,15 @@
                     if (!SILENT_MODE) {
                         echo "<h3>Course: ".$feed['blog']." (".$feed['course_guid'].") by ".$feed['fullname']."</h3>";
                     }
-                    $posts_count = $posts_count + $this->suckFeed($feed['posts'], $feed['course_guid'], $feed['fullname'], "post");
-                    $comments_count = $comments_count + $this->suckFeed($feed['comments'], $feed['course_guid'], $feed['fullname'], "comment");
+                    $posts_count = $posts_count + $this->suckFeed($feed['posts'], $feed['course_guid'], $feed['fullname'], $feed['start'], "post");
+                    $comments_count = $comments_count + $this->suckFeed($feed['comments'], $feed['course_guid'], $feed['fullname'], $feed['start'], "comment");
                 }
             }
             $statistics->completeSuck($post_stat_id, $posts_count);
             $statistics->completeSuck($comment_stat_id, $comments_count);
         }
         
-        function suckFeed($feed_url, $course, $author, $type="post") {
+        function suckFeed($feed_url, $course, $author, $start, $type="post") {
             $feed = new SimplePie();
 		    $feed->set_feed_url($feed_url);
 			$feed->enable_cache(false);
@@ -66,12 +66,14 @@
 	            }
                 if ($title && $link && $date && $content) {
                     if ($type=="post") {
-                        $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id);
-                        $post_rel_written = $this->writePostRelation($course, $link);
-                        $status = "<span style='color:red'>was not added or updated in database</span>";
-                        if ($post_written && $post_rel_written) {
-                             $success++;
-                             $status = "<span style='color:green'>was added or updated in database</span>";
+                        $status = "<span style='color:red'>was not added or updated in database because </span> ".$date." < ".$start;
+                        if ($start<=$date) {
+                            $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id);
+                            $post_rel_written = $this->writePostRelation($course, $link);
+                            if ($post_written && $post_rel_written) {
+                                 $success++;
+                                 $status = "<span style='color:green'>was added or updated in database</span>";
+                            }
                         }
                         if (!SILENT_MODE) {
                             echo "Related post: ".$link." - ".$status."<br />";

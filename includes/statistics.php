@@ -1,9 +1,9 @@
 <?php
 
 /* Require configuration */
-require_once("includes/config.php");
+require_once("config.php");
 /* Require database */
-require_once("includes/db.php");
+require_once("db.php");
 
 class Statistics {
     

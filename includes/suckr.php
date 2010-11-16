@@ -79,11 +79,16 @@
 	                }
                     if ($title && $link && $date && $content) {
                         if ($type=="post") {
-                            preg_match('/This is your first post./', $post, $matches);
+                            preg_match('/This is your first post./', $content, $matches);
                             if (count($matches)>1 && strcmp($matches[1], "This is your first post.")) {
                                 $status .= " this is probably wordpress default post, and will be hidden";
                                 $hidden = 1;
-                            }
+							}
+							// See if posts exists, get hidden value if true
+							$exists = $this->getHiddenByLink($link);
+							if (!$exists === false) {
+								$hidden = $exists->hidden;
+							}
                             $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id, $hidden);
                             $post_rel_written = $this->writePostRelation($course, $link);
                             if ($post_written && $post_rel_written) {
@@ -91,11 +96,16 @@
                                 $status = "<span style='color:green'>was added or updated in database</span>";
                             }
                         } else {
-                            preg_match('/Hi, this is a comment./', $comment, $matches);
+                            preg_match('/Hi, this is a comment./', $content, $matches);
                             if (count($matches)>1 && strcmp($matches[1], "Hi, this is a comment.")) {
                                 $status .= " this is probably wordpress default comment, and will be hidden";
                                 $hidden = 1;
-                            }
+							}
+							// See if comment exists, get hidden value if true
+							$exists = $this->getHiddenByLink($link, 'comment');
+							if (!$exists === false) {
+								$hidden = $exists->hidden;
+							}
                             $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id, $hidden);
                             $comment_rel_written = $this->writeCommentRelation($course, $link);
                             if ($comment_written && $comment_rel_written) {
@@ -167,7 +177,22 @@
                 'hidden' => $hidden
             );
             return $db->insert(DB_PREFIX."comments", $data, array('link', 'base'));
-        }
+		}
+
+		// Returns object with attribute "hidden" or false
+		function getHiddenByLink($link, $type = 'post') {
+			global $db;
+			if (!$link || !in_array($type, array('post', 'comment'))) {
+				return false;
+			}
+			$query = "SELECT hidden FROM ".DB_PREFIX.$type."s WHERE link = '".$link."'";
+			$result = $db->query($query);
+			if ($result) {
+				return mysql_fetch_object($result);
+			}
+
+			return false;
+		}
     
     }
 ?>

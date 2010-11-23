@@ -109,3 +109,19 @@ CREATE TABLE IF NOT EXISTS prefix_log (
     created TIMESTAMP DEFAULT NOW(),
     log TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+CREATE TABLE IF NOT EXISTS prefix_post_metadata (
+	FOREIGN KEY (course_id) REFERENCES prefix_educourses (id) ON DELETE CASCADE,
+	FOREIGN KEY (post_id) REFERENCES prefix_posts (id) ON DELETE CASCADE,
+	data_type varchar(255) NOT NULL,
+	data text,
+	PRIMARY KEY (course_id, post_id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+CREATE TABLE IF NOT EXISTS prefix_comment_metadata (
+	FOREIGN KEY (course_id) REFERENCES prefix_educourses (id) ON DELETE CASCADE,
+	FOREIGN KEY (comment_id) REFERENCES prefix_comments (id) ON DELETE CASCADE,
+	data_type varchar(255) NOT NULL,
+	data text,
+	PRIMARY KEY (course_id, comment_id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS prefix_comments (
 CREATE TABLE IF NOT EXISTS prefix_course_rels_posts (
     course_guid bigint(20) NOT NULL,
     link char(255) NOT NULL,
+	hidden int(1) DEFAULT 0,
     FOREIGN KEY (course_guid) REFERENCES prefix_educourses (course_guid) ON DELETE CASCADE,
     FOREIGN KEY (link) REFERENCES prefix_posts (link) ON DELETE CASCADE,
     PRIMARY KEY (course_guid, link)
@@ -89,6 +90,7 @@ CREATE TABLE IF NOT EXISTS prefix_course_rels_posts (
 CREATE TABLE IF NOT EXISTS prefix_course_rels_comments (
     course_guid bigint(20) NOT NULL,
     link char(255) NOT NULL,
+	hidden int(1) DEFAULT 0,
     FOREIGN KEY (course_guid) REFERENCES prefix_educourses (course_guid) ON DELETE CASCADE,
     FOREIGN KEY (link) REFERENCES prefix_comments (link) ON DELETE CASCADE,
     PRIMARY KEY (course_guid, link)
@@ -108,20 +110,4 @@ CREATE TABLE IF NOT EXISTS prefix_log (
     id int(5) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     created TIMESTAMP DEFAULT NOW(),
     log TEXT
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
-
-CREATE TABLE IF NOT EXISTS prefix_post_metadata (
-	FOREIGN KEY (course_id) REFERENCES prefix_educourses (id) ON DELETE CASCADE,
-	FOREIGN KEY (post_id) REFERENCES prefix_posts (id) ON DELETE CASCADE,
-	data_type varchar(255) NOT NULL,
-	data text,
-	PRIMARY KEY (course_id, post_id)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
-
-CREATE TABLE IF NOT EXISTS prefix_comment_metadata (
-	FOREIGN KEY (course_id) REFERENCES prefix_educourses (id) ON DELETE CASCADE,
-	FOREIGN KEY (comment_id) REFERENCES prefix_comments (id) ON DELETE CASCADE,
-	data_type varchar(255) NOT NULL,
-	data text,
-	PRIMARY KEY (course_id, comment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

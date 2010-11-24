@@ -122,13 +122,12 @@
             return $this->getCourseData($param, "comment");
         }
 
-	    // XXX NEEDS NEW LOGIC FOR HANDLING HIDDEN	
         function getCourseData($param, $type="post") {
             $limit = 5;
             if ($param[1]) $limit = $param[1];
             $post_id = "";
             if ($type=="comment") $post_id = " ,post_id, post_author";
-            $query = "SELECT DISTINCT id, c.link as link, title, SUBSTRING(content,1,250) as content, date, author, blogger_id, base".$post_id." FROM ".DB_PREFIX.$type."s c LEFT JOIN ".DB_PREFIX."course_rels_".$type."s r ON c.link=r.link WHERE r.course_guid=".$param[0]." AND !c.hidden ORDER BY date DESC LIMIT ".$limit;
+            $query = "SELECT DISTINCT id, c.link as link, title, SUBSTRING(content,1,250) as content, date, author, blogger_id, base".$post_id." FROM ".DB_PREFIX.$type."s c LEFT JOIN ".DB_PREFIX."course_rels_".$type."s r ON c.link=r.link WHERE r.course_guid=".$param[0]." AND !r.hidden ORDER BY date DESC LIMIT ".$limit;
             $result = $this->query($query);
             $comments = array();
             if(mysql_num_rows($result)) {
@@ -166,13 +165,27 @@
                 return $post;
             }
             return 0;
-        }
+		}
 
-		// XXX NEEDS NEW LOGIC FOR HANDLING HIDDEN
+		function getCommentById($id) {
+			if ($id && is_numeric($id)) {
+				$query = "SELECT id, link, title, content, date, author, blogger_id, base, post_id, post_author FROM ".DB_PREFIX."comments WHERE id=".$id;
+				$result = $this->query($query);
+				$comment = mysql_fetch_array($result);
+				if ($comment['blogger_id']) {
+					if ($fn = $this->getFullnameByBloggerId($comment['blogger_id'])) {
+						$comment['author'] = $fn;
+					}
+				}
+				return $comment;
+			}
+			return 0;
+		}
+
         function getCommentsByPost($post) {
             $comments = array();
             if ($post) {
-                $query = "SELECT id, link, title, content, date, author, blogger_id, base, post_id, post_author FROM ".DB_PREFIX."comments WHERE post_id=".$post." AND !hidden ORDER BY date ASC";
+                $query = "SELECT id, c.link as link, title, content, date, author, blogger_id, base, post_id, post_author c FROM ".DB_PREFIX."comments LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE c.post_id=".$post." AND !r.hidden ORDER BY date ASC";
                 $result = $this->query($query);
                 while($comment = mysql_fetch_array($result)) {
                     if ($comment['blogger_id']) {
@@ -204,47 +217,53 @@
             return 0;
 		}
 
-		function setPostMetadata($id, $course_id, $data_type, $data) {
-			$query = "INSERT INTO ".DB_PREFIX."post_metadata (course_id, post_id, data_type, data) VALUES ($course_id, $id, '$data_type', '$data') ON DUPLICATE KEY UPDATE ".DB_PREFIX."post_metadata SET data='$data' WHERE course_id=$course_id AND post_id=$id AND data_type='$data_type'";
-			return $this->query($query);
-		}
-
-		function setCommentMetadata($id, $course_id, $data_type, $data) {
-			$query = "INSERT INTO ".DB_PREFIX."comment_metadata (course_id, comment_id, data_type, data) VALUES ($course_id, $id, '$data_type', '$data') ON DUPLICATE KEY UPDATE ".DB_PREFIX."comment_metadata SET data='$data' WHERE course_id=$course_id AND post_id=$id AND data_type='$data_type'";
-			return $this->query($query);
-		}
-        
 		function hidePostById($id, $course_id) {
 			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
-				return $this->setPostMetadata($id, $course_id, 'hidden', 1);
+				$post = $this->getPostById($id);
+				if ($post) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_posts SET hidden=1 WHERE course_guid=$course_guid AND link='".$post['link']."'";
+					return $this->query($query);
+				}
 			}
 			return 0;
 		}
         
 		function hideCommentById($id, $course_id) {
 			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
-				return $this->setCommentMetadata($id, $course_id, 'hidden', 1);
+				$comment = $this->getCommentById($id);
+				if ($comment) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET hidden=1 WHERE course_guid=$course_id AND link='".$comment['link']."'";
+					return $this->query($query);
+				}
 			}
 			return 0;
 		}
         
 		function unhidePostById($id, $course_id) {
 			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
-				return $this->setPostMetadata($id, $course_id, 'hidden', 0);
+				$post = $this->getPostById($id);
+				if ($post) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_posts SET hidden=0 WHERE course_guid=$course_guid AND link='".$post['link']."'";
+					return $this->query($query);
+				}
 			}
 			return 0;
 		}
         
 		function unhideCommentById($id, $course_id) {
 			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
-				return $this->setCommentMetadata($id, $course_id, 'hidden', 0);
+				$comment = $this->getCommentById($id);
+				if ($comment) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET hidden=0 WHERE course_guid=$course_id AND link='".$comment['link']."'";
+					return $this->query($query);
+				}
 			}
 			return 0;
 		}
-        // XXX NEEDS NEW LOGIC FOR HANDLING HIDDEN
+
         function getHiddenByCourse($course_guid, $type="post") {
             if ($course_guid && is_numeric($course_guid) && in_array($type, array("post", "comment"))) {
-                $query = "SELECT DISTINCT id, c.link as link, title, date, author FROM ".DB_PREFIX.$type."s c LEFT JOIN ".DB_PREFIX."course_rels_".$type."s r ON c.link=r.link WHERE r.course_guid=".$course_guid." AND c.hidden ORDER BY date DESC";
+                $query = "SELECT DISTINCT id, c.link as link, title, date, author FROM ".DB_PREFIX.$type."s c LEFT JOIN ".DB_PREFIX."course_rels_".$type."s r ON c.link=r.link WHERE r.course_guid=".$course_guid." AND r.hidden ORDER BY date DESC";
                 $result = $this->query($query);
                 $ress = array();
                 while($res = mysql_fetch_array($result)) {

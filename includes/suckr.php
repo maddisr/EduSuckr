@@ -90,7 +90,7 @@
 								$hidden = $exists->hidden;
 							}
                             $post_written = $this->writePost($title, $link, $base, $date, $content, $author_name, $blogger_id, $hidden);
-                            $post_rel_written = $this->writePostRelation($course, $link);
+                            $post_rel_written = $this->writePostRelation($course, $link, $hidden);
                             if ($post_written && $post_rel_written) {
                                 $success++;
                                 $status = "<span style='color:green'>was added or updated in database</span>";
@@ -107,7 +107,7 @@
 								$hidden = $exists->hidden;
 							}
                             $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id, $hidden);
-                            $comment_rel_written = $this->writeCommentRelation($course, $link);
+                            $comment_rel_written = $this->writeCommentRelation($course, $link, $hidden);
                             if ($comment_written && $comment_rel_written) {
                                 $success++;
                                 $status = "<span style='color:green'>was added or updated in database</span>";
@@ -130,15 +130,15 @@
 		    return $success;
         }
         
-        function writePostRelation($course, $link) {
+        function writePostRelation($course, $link, $hidden) {
             global $db;
-            $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_posts (course_guid, link) values (".$course.", '".$link."')";
+            $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_posts (course_guid, link, hidden) values (".$course.", '".$link."', ".$hidden.")";
             return $db->query($query);  
         }
         
-        function writeCommentRelation($course, $link) {
+        function writeCommentRelation($course, $link, $hidden) {
             global $db;
-            $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_comments (course_guid, link) values (".$course.", '".$link."')";
+            $query = "INSERT IGNORE into ".DB_PREFIX."course_rels_comments (course_guid, link, hidden) values (".$course.", '".$link."',".$hidden.")";
             return $db->query($query);  
         }
         
@@ -152,8 +152,7 @@
                 'content' => $content,
                 'author' => $author_name,
                 'blogger_id' => $blogger_id,
-                'modified' => 'NOW()',
-                'hidden' => $hidden
+                'modified' => 'NOW()'
             );
             return $db->insert(DB_PREFIX."posts", $data, array('link', 'base'));
         }
@@ -173,19 +172,18 @@
                 'blogger_id' => $blogger_id,
                 'post_id' => $pre_res['id'],
                 'post_author' => $pre_res['author'],
-                'modified' => 'NOW()',
-                'hidden' => $hidden
+                'modified' => 'NOW()'
             );
             return $db->insert(DB_PREFIX."comments", $data, array('link', 'base'));
 		}
 
 		// Returns object with attribute "hidden" or false
-		function getHiddenByLink($link, $type = 'post') {
+		function getHiddenByLink($link, $course_id, $type = 'post') {
 			global $db;
 			if (!$link || !in_array($type, array('post', 'comment'))) {
 				return false;
 			}
-			$query = "SELECT hidden FROM ".DB_PREFIX.$type."s WHERE link = '".$link."'";
+			$query = "SELECT hidden FROM ".DB_PREFIX."course_rels_".$type."s WHERE link = '".$link."' AND course_guid=".$course_id;
 			$result = $db->query($query);
 			if ($result) {
 				return mysql_fetch_object($result);

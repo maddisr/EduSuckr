@@ -143,10 +143,10 @@
             return serialize($comments);
         }
         
-        function getCoursePostById($id) {
+        function getCoursePostById($id, $course_guid) {
             $post = $this->getPostById($id);
             if ($post) {
-                $comments = $this->getCommentsByPost($id);
+                $comments = $this->getCommentsByPost($id, $course_guid);
                 return serialize(array('post'=>$post,'comments'=>$comments));
             }
             return 0;
@@ -182,10 +182,10 @@
 			return 0;
 		}
 
-        function getCommentsByPost($post) {
+        function getCommentsByPost($post, $course_guid) {
             $comments = array();
-            if ($post) {
-                $query = "SELECT id, c.link as link, title, content, date, author, blogger_id, base, post_id, post_author c FROM ".DB_PREFIX."comments LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE c.post_id=".$post." AND !r.hidden ORDER BY date ASC";
+            if ($post && $course_guid) {
+                $query = "SELECT DISTINCT id, c.link as link, title, content, date, author, blogger_id, base, post_id, post_author FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE c.post_id=".$post." AND !r.hidden AND r.course_guid=".$course_guid." ORDER BY date ASC";
                 $result = $this->query($query);
                 while($comment = mysql_fetch_array($result)) {
                     if ($comment['blogger_id']) {
@@ -217,8 +217,10 @@
             return 0;
 		}
 
-		function hidePostById($id, $course_id) {
-			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
+		function hidePostById($param) {
+			$id = (int) $param[0];
+			$course_guid = (int) $param[1];
+			if ($id && $course_guid && is_numeric($id) && is_numeric($course_guid)) {
 				$post = $this->getPostById($id);
 				if ($post) {
 					$query = "UPDATE ".DB_PREFIX."course_rels_posts SET hidden=1 WHERE course_guid=$course_guid AND link='".$post['link']."'";
@@ -228,19 +230,23 @@
 			return 0;
 		}
         
-		function hideCommentById($id, $course_id) {
-			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
+		function hideCommentById($param) {
+			$id = (int)$param[0];
+			$course_guid = (int)$param[1];
+			if ($id && $course_guid && is_numeric($id) && is_numeric($course_guid)) {
 				$comment = $this->getCommentById($id);
 				if ($comment) {
-					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET hidden=1 WHERE course_guid=$course_id AND link='".$comment['link']."'";
+					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET hidden=1 WHERE course_guid=$course_guid AND link='".$comment['link']."'";
 					return $this->query($query);
 				}
 			}
 			return 0;
 		}
         
-		function unhidePostById($id, $course_id) {
-			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
+		function unhidePostById($param) {
+			$id = (int)$param[0];
+			$course_guid = (int)$param[1];
+			if ($id && $course_guid && is_numeric($id) && is_numeric($course_guid)) {
 				$post = $this->getPostById($id);
 				if ($post) {
 					$query = "UPDATE ".DB_PREFIX."course_rels_posts SET hidden=0 WHERE course_guid=$course_guid AND link='".$post['link']."'";
@@ -250,11 +256,13 @@
 			return 0;
 		}
         
-		function unhideCommentById($id, $course_id) {
-			if ($id && $course_id && is_numeric($id) && is_numeric($course_id)) {
+		function unhideCommentById($param) {
+			$id = (int)$param[0];
+			$course_guid = (int)$param[1];
+			if ($id && $course_guid && is_numeric($id) && is_numeric($course_guid)) {
 				$comment = $this->getCommentById($id);
 				if ($comment) {
-					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET hidden=0 WHERE course_guid=$course_id AND link='".$comment['link']."'";
+					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET hidden=0 WHERE course_guid=$course_guid AND link='".$comment['link']."'";
 					return $this->query($query);
 				}
 			}

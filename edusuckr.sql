@@ -58,7 +58,6 @@ CREATE TABLE IF NOT EXISTS prefix_posts (
     blogger_id char(20) DEFAULT 0,
     created TIMESTAMP DEFAULT NOW(),
     modified TIMESTAMP,
-    hidden int(1) DEFAULT 0,
     id bigint(20) NOT NULL UNIQUE KEY AUTO_INCREMENT
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
@@ -74,7 +73,6 @@ CREATE TABLE IF NOT EXISTS prefix_comments (
     modified TIMESTAMP,
     post_id bigint(20) NOT NULL,
     post_author char(255),
-    hidden int(1) DEFAULT 0,
     id bigint(20) NOT NULL UNIQUE KEY AUTO_INCREMENT
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 

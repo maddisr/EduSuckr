@@ -25,11 +25,11 @@
     $server->register('getCourseLinkingConnections', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getCoursePosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getCourseComments', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
-    $server->register('getCoursePostById', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
-    $server->register('hidePostById', array("param"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
-    $server->register('hideCommentById', array("param"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
-    $server->register('unhidePostById', array("param"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
-    $server->register('unhideCommentById', array("param"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
+    $server->register('getCoursePostById', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
+    $server->register('hidePostById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
+    $server->register('hideCommentById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
+    $server->register('unhidePostById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
+    $server->register('unhideCommentById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
     $server->register('getHiddenPostsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getHiddenCommentsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     
@@ -57,7 +57,7 @@
     /* Function getCoursePostById */
     function getCoursePostById($param) {
         global $db;
-        return $db->getCoursePostById($param);
+        return $db->getCoursePostById((int)$param[0],(int)$param[1]);
     }
     // Returns list of course IDs
     function listEduCources() {
@@ -105,24 +105,24 @@
         return !isAuthenticated() ? 0 : $db->removeAssignment($param);
     }
     /* Function hidePostById */
-    function hidePostById($id) {
+    function hidePostById($param) {
         global $db;
-        return $db->hidePostById($id);
+        return $db->hidePostById($param);
     }
     /* Function hideCommentById */
-    function hideCommentById($id) {
+    function hideCommentById($param) {
         global $db;
-        return $db->hideCommentById($id);
+        return $db->hideCommentById($param);
     }
     /* Function hidePostById */
-    function unhidePostById($id) {
+    function unhidePostById($param) {
         global $db;
-        return $db->unhidePostById($id);
+        return $db->unhidePostById($param);
     }
     /* Function hideCommentById */
-    function unhideCommentById($id) {
+    function unhideCommentById($param) {
         global $db;
-        return $db->unhideCommentById($id);
+        return $db->unhideCommentById($param);
     }
     
     /* Function getHiddenPostsByCourse */

@@ -85,7 +85,7 @@
                                 $hidden = 1;
 							}
 							// See if posts exists, get hidden value if true
-							$exists = $this->getHiddenByLink($link);
+							$exists = $this->getHiddenByLink($link, $course);
 							if (!$exists === false) {
 								$hidden = $exists->hidden;
 							}
@@ -102,7 +102,7 @@
                                 $hidden = 1;
 							}
 							// See if comment exists, get hidden value if true
-							$exists = $this->getHiddenByLink($link, 'comment');
+							$exists = $this->getHiddenByLink($link, $course, 'comment');
 							if (!$exists === false) {
 								$hidden = $exists->hidden;
 							}

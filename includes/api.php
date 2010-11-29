@@ -27,7 +27,7 @@
             while($participant = mysql_fetch_object($result)) {
                 // table contents
 		        if ($participant && $assignments && is_array($assignments)) {
-			        $assignments_results = getSingleParticipantProgress($assignments, $participant->blog, $course_starting_date);
+			        $assignments_results = getSingleParticipantProgress($assignments, $participant->blog, $course_starting_date, $guid);
 			        $body_data[] = array('participant'=>$participant,'assignment'=>$assignments_results);
 		        }               
             }
@@ -35,7 +35,7 @@
 		return serialize($body_data);
     }
 
-    function getSingleParticipantProgress($assignments, $posts_url, $course_starting_date) {
+    function getSingleParticipantProgress($assignments, $posts_url, $course_starting_date, $guid) {
 	    $returned = array();
 		$i = 0;
 		$prev_a_start = 0;
@@ -54,17 +54,17 @@
 			$i++;
 			// get posts from DB
 			global $db;
-            $query = "SELECT * FROM ".DB_PREFIX."posts WHERE content LIKE '%".mysql_real_escape_string($assignment->blog_post_url)."%' AND link LIKE '".mysql_real_escape_string($posts_url)."%' AND !hidden ORDER BY date DESC";
+            $query = "SELECT id, p.link as link, title  FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND content LIKE '%".mysql_real_escape_string($assignment->blog_post_url)."%' AND p.link LIKE '".mysql_real_escape_string($posts_url)."%' AND !hidden ORDER BY date DESC";
             $result = $db->query($query);
             if( mysql_num_rows($result) ) {
                 $item = mysql_fetch_object($result);
-	            $returned[$key] = array('state' => 2, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
+	        $returned[$key] = array('state' => 2, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
             } else {
-                $query = "SELECT * FROM ".DB_PREFIX."posts WHERE link LIKE '".mysql_real_escape_string($posts_url)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." AND !hidden ORDER BY date DESC";
+                $query = "SELECT id, p.link as link, title FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND p.link LIKE '".mysql_real_escape_string($posts_url)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." AND !r.hidden ORDER BY date DESC";
                 $result = $db->query($query);
                 if( mysql_num_rows($result) ) {
                     $item = mysql_fetch_object($result);
-	                $returned[$key] = array('state' => 1, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
+	            $returned[$key] = array('state' => 1, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
                 } else {
                     $returned[$key] = array('state' => 0);    
                 }
@@ -86,8 +86,7 @@
 		foreach ($participants as $key => $participant) {
 	        $participant_blog_url = $participant->blog;
 			$all_participants[] = $participant->firstname . ' ' . $participant->lastname;
-	        $query = "SELECT * FROM ".DB_PREFIX."posts pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid." AND !hidden";
-	        //return $query;
+	        $query = "SELECT * FROM ".DB_PREFIX."posts pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') LEFT JOIN ".DB_PREFIX."course_rels_posts r ON pos.link=r.link WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid." AND r.course_guid=".$educourse_guid." AND !hidden";
             $result = $db->query($query);
             while($item = mysql_fetch_object($result)) {
 		        if (!in_array($participant->firstname . ' ' . $participant->lastname, $connected_participants))
@@ -96,7 +95,7 @@
 					$connected_participants[] = $item->firstname . ' ' . $item->lastname;
 			    $educourse_connections[] = array('person' => $item->firstname . ' ' . $item->lastname , 'links' => $participant->firstname . ' ' . $participant->lastname, 'size' => 1);
 		    }
-		    $query = "SELECT * FROM ".DB_PREFIX."comments pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid." AND !hidden";
+		    $query = "SELECT * FROM ".DB_PREFIX."comments pos LEFT JOIN ".DB_PREFIX."participants par ON link LIKE CONCAT(blog,'%') LEFT JOIN ".DB_PREFIX."course_rels_comments r ON pos.link=r.link WHERE pos.content LIKE '%".mysql_real_escape_string($participant->blog)."%' AND par.participant_guid!=".$participant->participant_guid." AND par.course_guid=".$educourse_guid." AND r.course_guid=".$educourse_guid." AND !hidden";
             $result = $db->query($query);
             while($item = mysql_fetch_object($result)) {
 		        if (!in_array($participant->firstname . ' ' . $participant->lastname, $connected_participants))

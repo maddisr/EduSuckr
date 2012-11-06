@@ -161,10 +161,30 @@
             }
             return serialize($comments);
 		}
+
+        /**
+         * Determines if a post is hidden within a course context.
+         *
+         * @param int    $course_guid Course unique identifier
+         * @param string $post_link   Post address
+         *
+         * @return int Either 0 or 1; defaults to 0
+         */
+        function getIsCoursePostHidden($course_guid, $post_link) {
+            $query = "SELECT hidden FROM ".DB_PREFIX."course_rels_posts WHERE course_guid={$course_guid} AND link = '{$post_link}'";
+            $result = $this->query($query);
+            if ($result) {
+                $data = mysql_fetch_object($result);
+                return $data->hidden;
+            }
+            return 0;
+        }
         
         function getCoursePostById($id, $course_guid) {
             $post = $this->getPostById($id);
             if ($post) {
+                // Append hidden or not information
+                $post['hidden'] = $this->getIsCoursePostHidden($course_guid, $post['link']);
                 $comments = $this->getCommentsByPost($id, $course_guid);
                 return serialize(array('post'=>$post,'comments'=>$comments));
             }

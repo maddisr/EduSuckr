@@ -32,6 +32,7 @@
     $server->register('unhideCommentById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
     $server->register('getHiddenPostsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getHiddenCommentsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
+	 $server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
     
 /* Auth check */
     function isAuthenticated() {
@@ -64,6 +65,12 @@
         global $db;
         return $db->listEduCources();
     }
+
+	/* Function getPartitipantPosts */
+	function getParticipantPosts($param) {
+		global $db;
+		return $db->getPartitipantPosts($param);
+	}
     
     /* Function setEduCource */
     // adds or modifies eduCourse

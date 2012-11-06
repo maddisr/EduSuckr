@@ -66,10 +66,10 @@
         return $db->listEduCources();
     }
 
-	/* Function getPartitipantPosts */
+	/* Function getParticipantPosts */
 	function getParticipantPosts($param) {
 		global $db;
-		return $db->getPartitipantPosts($param);
+		return $db->getParticipantPosts($param);
 	}
     
     /* Function setEduCource */

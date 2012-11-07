@@ -80,7 +80,7 @@
                     if ($title && $link && $date && $content) {
                         if ($type=="post") {
                             preg_match('/This is your first post./', $content, $matches);
-                            if (count($matches)>1 && strcmp($matches[1], "This is your first post.")) {
+                            if (count($matches)>0 && (strcmp($matches[0], "This is your first post.") === 0)) {
                                 $status .= " this is probably wordpress default post, and will be hidden";
                                 $hidden = 1;
 							}
@@ -97,7 +97,7 @@
                             }
                         } else {
                             preg_match('/Hi, this is a comment./', $content, $matches);
-                            if (count($matches)>1 && strcmp($matches[1], "Hi, this is a comment.")) {
+                            if (count($matches)>0 && (strcmp($matches[0], "Hi, this is a comment.") === 0)) {
                                 $status .= " this is probably wordpress default comment, and will be hidden";
                                 $hidden = 1;
 							}

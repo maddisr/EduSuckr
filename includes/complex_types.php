@@ -64,6 +64,8 @@
 		 	    'type' => 'xsd:string'),
 		 	'blog' => array('name' => 'blog',
 		 	    'type' => 'xsd:string'),
+            'blog_base' => array('name' => 'blog_base',
+                'type' => 'xsd:string'),
 		 	'posts' => array('name' => 'posts',
 		 	    'type' => 'xsd:string'),
 		 	'comments' => array('name' => 'comments',

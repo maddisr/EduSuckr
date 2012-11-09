@@ -39,6 +39,8 @@
         }
         
         function suckFeed($feed_url, $course, $author, $start, $type="post") {
+            global $db;
+
             $feed = new SimplePie();
 		    $feed->set_feed_url($feed_url);
 			$feed->enable_cache(false);
@@ -106,6 +108,17 @@
 							if (!$exists === false) {
 								$hidden = $exists->hidden;
 							}
+
+                            // Check if post is already hidden, set the same for comment
+                            if (!$hidden) {
+                                $tmp_post_link = $db->getPostLinkByCommentLink($link);
+                                if ($tmp_post_link) {
+                                    $tmp_exists = $this->getHiddenByLink($tmp_post_link, $course, 'post');
+                                    if (!$tmp_exists === false) {
+                                        $hidden = $tmp_exists->hidden;
+                                    }
+                                }
+                            }
                             $comment_written = $this->writeComment($title, $link, $base, $date, $content, $f_author_name, $blogger_id, $hidden);
                             $comment_rel_written = $this->writeCommentRelation($course, $link, $hidden);
                             if ($comment_written && $comment_rel_written) {

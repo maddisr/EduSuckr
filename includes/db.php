@@ -256,6 +256,27 @@
             return 0;
 		}
 
+        /**
+         * Searches for post using comment URL.
+         * Returns post URL if possible.
+         *
+         * @param string $link Comment URL
+         *
+         * @return mixed
+         */
+        function getPostLinkByCommentLink($link) {
+            $query = "SELECT link FROM ".DB_PREFIX."posts WHERE '".$link."' LIKE CONCAT(link,'%')";
+            $result = $this->query($query);
+            if ($result) {
+                if ($data = mysql_fetch_object($result)) {
+                    if ($data) {
+                        return $data->link;
+                    }
+                }
+            }
+            return 0;
+        }
+
 		function hidePostById($param) {
 			$id = (int) $param[0];
 			$course_guid = (int) $param[1];

@@ -39,3 +39,9 @@ Run migration to move hidden data from _posts and _comments to _rels: suckr_upgr
 When the process has been completed, get rid of hidden in _posts and _comments:
   ALTER TABLE prefix_posts DROP COLUMN hidden;
   ALTER TABLE prefix_comments DROP COLUMN hidden;
+
+== 08.11.2012 Added blog_base for participants; 0.5.1 to 0.5.2 ==
+Add blog_base column to participants table:
+  ALTER TABLE prefix_participants ADD COLUMN blog_base char(255);
+Populate blog_base column with data from blog column:
+  UPDATE prefix_participants SET blog_base = blog;

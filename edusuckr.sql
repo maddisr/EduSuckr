@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS prefix_participants (
     lastname char(255),
     email char(255),
     blog char(255),
+    blog_base char(255),
     posts char(255),
     comments char(255),
     blogger_id varchar(20) DEFAULT 0,

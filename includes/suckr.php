@@ -40,6 +40,7 @@
         
         function suckFeed($feed_url, $course, $author, $start, $type="post") {
             global $db;
+ 	    $feed_url = str_replace("https://", "http://", $feed_url);
 
             $feed = new SimplePie();
 		    $feed->set_feed_url($feed_url);

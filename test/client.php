@@ -1,7 +1,7 @@
 <?php
     require_once("../includes/config.php");
     require_once("../includes/nusoap/nusoap.php");
-    $client = new nusoap_client(SERVER_ROOT.'ws.php?wsdl', TRUE);
+    $client = new nusoap_client(SERVER_ROOT.'/ws.php?wsdl', TRUE);
     $err = $client->getError();
     if ($err) {
 	    echo '<h2>Constructor error</h2><pre>' . $err . '</pre>';

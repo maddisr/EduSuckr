@@ -45,3 +45,8 @@ Add blog_base column to participants table:
   ALTER TABLE prefix_participants ADD COLUMN blog_base char(255);
 Populate blog_base column with data from blog column:
   UPDATE prefix_participants SET blog_base = blog;
+
+
+--Add assigmnet_id to post_rels--
+ALTER TABLE prefix_course_rels_posts ADD COLUMN assignment_id bigint(20) DEFAULT NULL;
+ALTER TABLE prefix_course_rels_posts ADD FOREIGN KEY (assignment_id) REFERENCES prefix_assignments (assignment_id) ON DELETE SET NULL;

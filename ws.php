@@ -32,7 +32,8 @@
     $server->register('unhideCommentById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
     $server->register('getHiddenPostsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getHiddenCommentsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
-	 $server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
+	$server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
+	$server->register('connectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
     
 /* Auth check */
     function isAuthenticated() {
@@ -142,6 +143,12 @@
     function getHiddenCommentsByCourse($course_guid) {
         global $db;
         return $db->getHiddenByCourse($course_guid,"comment");
+    }
+	
+	/* Function connectPostWithAssignment */
+    function connectPostWithAssignment($course_guid, $post_id, $assignment_id) {
+        global $db;
+        return $db->connectPostWithAssignment($course_guid, $post_id, $assignment_id);
     }
     
     $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';

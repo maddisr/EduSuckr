@@ -1,6 +1,6 @@
 <?php
     
-    class DB {
+    class ESDB {
         
         function __construct() {
             $this->connect();
@@ -185,6 +185,7 @@
             if ($post) {
                 // Append hidden or not information
                 $post['hidden'] = $this->getIsCoursePostHidden($course_guid, $post['link']);
+				$post['assignment_id'] = $this->getCoursePostAssignmentID($course_guid, $post['link']);
                 $comments = $this->getCommentsByPost($id, $course_guid);
                 return serialize(array('post'=>$post,'comments'=>$comments));
             }
@@ -341,10 +342,44 @@
             }
             return 0;
         }
+		
+		/**
+         * Determines if a post is hidden within a course context.
+         *
+         * @param int    $course_guid Course unique identifier
+         * @param string $post_link   Post address
+         *
+         * @return int Either 0 or 1; defaults to 0
+         */
+        function getCoursePostAssignmentID($course_guid, $post_link) {
+            $query = "SELECT assignment_id FROM ".DB_PREFIX."course_rels_posts WHERE course_guid={$course_guid} AND link = '{$post_link}'";
+            $result = $this->query($query);
+            if ($result) {
+                $data = mysql_fetch_object($result);
+                return (int) $data->assignment_id;
+            }
+            return 0;
+        }
+		
+		function connectPostWithAssignment($course_guid, $post_id, $assignment_id) {
+		    $course_guid = (int) $course_guid;
+			$post_id = (int) $post_id;
+			$assignment_id = (int) $assignment_id;
+			if ($post_id && $course_guid && $assignment_id && is_numeric($post_id) && is_numeric($course_guid) && is_numeric($assignment_id)) {
+				
+				$post = $this->getPostById($post_id);
+				// TODO check if assignment exists
+				if ($post) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_posts SET assignment_id=$assignment_id WHERE course_guid=$course_guid AND link='".$post['link']."'";
+					return $this->query($query);
+				}
+			}
+			return 0;
+		}
         
         
     }
    
-   $db = new DB;
+   $db = new ESDB;
    
 ?>

@@ -1,9 +1,9 @@
 <?php
 
 /* Require configuration */
-require_once("config.php");
+require_once(dirname(__FILE__) . "/config.php");
 /* Require database */
-require_once("db.php");
+require_once(dirname(__FILE__). "/db.php");
 
 class Statistics {
     
@@ -23,6 +23,7 @@ class Statistics {
     function performSuck($type) {
         global $db;
         $query = "INSERT into ".DB_PREFIX."statistics (error, type) values (1, '".$type."')";
+		
         $result = $db->query($query);
         if ($result) {
             return mysql_insert_id();

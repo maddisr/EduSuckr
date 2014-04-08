@@ -390,7 +390,7 @@
 			}
 			return 0;
 		}
-		function connectPostWithParticipant($course_guid, $post_id, $participant_id) {
+		function connectCommentWithParticipant($course_guid, $post_id, $participant_id) {
 		    $course_guid = (int) $course_guid;
 			$post_id = (int) $post_id;
 			$participant_id = (int) $$participant_id;

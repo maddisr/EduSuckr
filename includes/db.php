@@ -376,9 +376,40 @@
 			}
 			return 0;
 		}
+		function disconnectPostWithAssignment($course_guid, $post_id) {
+		    $course_guid = (int) $course_guid;
+			$post_id = (int) $post_id;
+			if ($post_id && $course_guid && is_numeric($post_id) && is_numeric($course_guid)) {
+				
+				$post = $this->getPostById($post_id);
+				// TODO check if assignment exists
+				if ($post) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_posts SET assignment_id=NULL WHERE course_guid=$course_guid AND link='".$post['link']."'";
+					return $this->query($query);
+				}
+			}
+			return 0;
+		}
+		function connectPostWithParticipant($course_guid, $post_id, $participant_id) {
+		    $course_guid = (int) $course_guid;
+			$post_id = (int) $post_id;
+			$participant_id = (int) $$participant_id;
+			if ($post_id && $course_guid && $$participant_id && is_numeric($post_id) && is_numeric($course_guid) && is_numeric($participant_id)) {
+				
+				$post = $this->getPostById($post_id);
+				// TODO check if assignment exists
+				if ($post) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET participant_id=$participant_id WHERE course_guid=$course_guid AND link='".$post['link']."'";
+					return $this->query($query);
+				}
+			}
+			return 0;
+		}
+	
+	}
         
         
-    }
+    
    
    $db = new ESDB;
    

@@ -92,8 +92,10 @@ CREATE TABLE IF NOT EXISTS prefix_course_rels_comments (
     course_guid bigint(20) NOT NULL,
     link char(255) NOT NULL,
 	hidden int(1) DEFAULT 0,
+	participant_id bigint(20) DEFAULT NULL,
     FOREIGN KEY (course_guid) REFERENCES prefix_educourses (course_guid) ON DELETE CASCADE,
     FOREIGN KEY (link) REFERENCES prefix_comments (link) ON DELETE CASCADE,
+	FOREIGN KEY (participant_id) REFERENCES prefix_participants (participant_guid) ON DELETE SET NULL,
     PRIMARY KEY (course_guid, link)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 

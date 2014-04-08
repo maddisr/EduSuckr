@@ -34,7 +34,8 @@
     $server->register('getHiddenCommentsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('connectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
-	$server->register('disconnectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
+	$server->register('disconnectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
+	$server->register('connectPostWithParticipant', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
     
 /* Auth check */
     function isAuthenticated() {
@@ -152,10 +153,16 @@
         return $db->connectPostWithAssignment($course_guid, $post_id, $assignment_id);
     }
     /* Function disconnectPostWithAssignment */
-    function disconnectPostWithAssignment($course_guid, $post_id, $assignment_id) {
+    function disconnectPostWithAssignment($course_guid, $post_id) {
         global $db;
-        return $db->disconnectPostWithAssignment($course_guid, $post_id, $assignment_id);
+        return !isAuthenticated() ? 0 : $db->disconnectPostWithAssignment($course_guid, $post_id);
     }
+	 function connectPostWithParticipant($course_guid, $post_id, $participant_id) {
+        global $db;
+        return $db->connectPostWithParticipant($course_guid, $post_id, $participant_id);
+    }
+	
+	
     $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';
     $server->service($HTTP_RAW_POST_DATA);
 ?>

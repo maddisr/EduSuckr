@@ -225,7 +225,7 @@
         function getCommentsByPost($post, $course_guid) {
             $comments = array();
             if ($post && $course_guid) {
-                $query = "SELECT DISTINCT id, c.link as link, title, content, date, author, blogger_id, base, post_id, post_author FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE c.post_id=".$post." AND !r.hidden AND r.course_guid=".$course_guid." ORDER BY date ASC";
+                $query = "SELECT DISTINCT id, c.link as link, title, content, date, author, blogger_id, base, post_id, post_author, r.participant_id AS participant_id FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE c.post_id=".$post." AND !r.hidden AND r.course_guid=".$course_guid." ORDER BY date ASC";
                 $result = $this->query($query);
                 while($comment = mysql_fetch_array($result)) {
                     if ($comment['blogger_id']) {
@@ -382,7 +382,6 @@
 			if ($post_id && $course_guid && is_numeric($post_id) && is_numeric($course_guid)) {
 				
 				$post = $this->getPostById($post_id);
-				// TODO check if assignment exists
 				if ($post) {
 					$query = "UPDATE ".DB_PREFIX."course_rels_posts SET assignment_id=NULL WHERE course_guid=$course_guid AND link='".$post['link']."'";
 					return $this->query($query);
@@ -390,16 +389,37 @@
 			}
 			return 0;
 		}
-		function connectCommentWithParticipant($course_guid, $post_id, $participant_id) {
-		    $course_guid = (int) $course_guid;
-			$post_id = (int) $post_id;
-			$participant_id = (int) $$participant_id;
-			if ($post_id && $course_guid && $$participant_id && is_numeric($post_id) && is_numeric($course_guid) && is_numeric($participant_id)) {
+	
+		function connectCommentWithParticipant($course_guid, $id, $participant_id) {
+			$course_guid = (int) $course_guid;
+			$id = (int) $id;
+			$participant_id = (int) $participant_id;
+			
+			
+			if ($course_guid && $id && $participant_id && is_numeric($course_guid) && is_numeric($id) && is_numeric($participant_id)) {
 				
-				$post = $this->getPostById($post_id);
-				// TODO check if assignment exists
-				if ($post) {
-					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET participant_id=$participant_id WHERE course_guid=$course_guid AND link='".$post['link']."'";
+				$comment = $this->getCommentById($id);
+				if ($comment) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET participant_id=$participant_id WHERE course_guid=$course_guid AND link='".$comment['link']."'";
+					return $this->query($query);
+				}
+			}
+			return 0;
+		}
+	
+		function disconnectCommentWithParticipant($course_guid, $id, $participant_id) {
+			$course_guid = (int) $course_guid;
+			$id = (int) $id;
+			$participant_id = (int) $participant_id;
+
+			error_log('KALASABA 12345678');
+			if ($course_guid && $id && $participant_id && is_numeric($course_guid) && is_numeric($id) && is_numeric($participant_id)) {
+				
+				$comment = $this->getCommentById($id);
+				if ($comment) {
+					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET participant_id=NULL WHERE course_guid=$course_guid AND link='".$comment['link']."'";
+				
+					
 					return $this->query($query);
 				}
 			}

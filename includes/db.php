@@ -410,16 +410,13 @@
 		function disconnectCommentWithParticipant($course_guid, $id, $participant_id) {
 			$course_guid = (int) $course_guid;
 			$id = (int) $id;
-			$participant_id = (int) $participant_id;
-
-			error_log('KALASABA 12345678');
-			if ($course_guid && $id && $participant_id && is_numeric($course_guid) && is_numeric($id) && is_numeric($participant_id)) {
+			
+			
+			if ($course_guid && $id && is_numeric($course_guid) && is_numeric($id)) {
 				
 				$comment = $this->getCommentById($id);
 				if ($comment) {
 					$query = "UPDATE ".DB_PREFIX."course_rels_comments SET participant_id=NULL WHERE course_guid=$course_guid AND link='".$comment['link']."'";
-				
-					
 					return $this->query($query);
 				}
 			}

@@ -36,7 +36,7 @@
 	$server->register('connectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('disconnectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('connectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
-	$server->register('disconnectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
+	$server->register('disconnectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	
 /* Auth check */
     function isAuthenticated() {
@@ -164,9 +164,9 @@
         return !isAuthenticated() ? 0 : $db->connectCommentWithParticipant($course_guid, $comment_id, $participant_id);
     }
 	
-	function disconnectCommentWithParticipant($course_guid, $comment_id, $participant_id) {
+	function disconnectCommentWithParticipant($course_guid, $comment_id) {
         global $db;
-        return $db->disconnectCommentWithParticipant($course_guid, $comment_id, $participant_id);
+        return !isAuthenticated() ? 0 : $db->disconnectCommentWithParticipant($course_guid, $comment_id);
     }
 	
 	

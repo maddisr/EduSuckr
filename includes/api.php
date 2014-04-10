@@ -27,20 +27,30 @@
             while($participant = mysql_fetch_object($result)) {
                 // table contents
 		        if ($participant && $assignments && is_array($assignments)) {
-			        $assignments_results = getSingleParticipantProgress($assignments, $participant->blog_base, $course_starting_date, $guid);
+			        $assignments_results = getSingleParticipantProgress($assignments, $participant, $course_starting_date, $guid);
 			        $body_data[] = array('participant'=>$participant,'assignment'=>$assignments_results);
 		        }               
             }
         }      
 		return serialize($body_data);
     }
+	
+	function getFirstResultOrFalse($query) {
+	    global $db;
+	    $result = $db->query($query);
+		if (mysql_num_rows($result)) {
+		    return mysql_fetch_object($result);
+		}
+		
+		return FALSE;
+	}
 
-    function getSingleParticipantProgress($assignments, $posts_url, $course_starting_date, $guid) {
+    function getSingleParticipantProgress($assignments, &$participant, $course_starting_date, $guid) {
 	    $returned = array();
 		$i = 0;
 		$prev_a_start = 0;
 		foreach ($assignments as $key => $assignment) {
-		  	// States: 0 - no link or blog post, 1 - blog post in certain time frame, 2 - link to assignment
+		  	// States: 0 - no link or blog post, 1 - blog post in certain time frame, 2 - link to assignment, 3 - manual link
 			$returned[$key] = array('state' => 0);
 			$timeframe_empty = true;
 			$timeframe_result = array('state' => 1);
@@ -54,13 +64,14 @@
 			$i++;
 			// get posts from DB
 			global $db;
-            $query = "SELECT id, p.link as link, title  FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND content LIKE '%".mysql_real_escape_string($assignment->blog_post_url)."%' AND p.link LIKE '".mysql_real_escape_string($posts_url)."%' AND !hidden ORDER BY date DESC";
-            $result = $db->query($query);
-            if( mysql_num_rows($result) ) {
-                $item = mysql_fetch_object($result);
-	        $returned[$key] = array('state' => 2, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
+            $query_link = "SELECT id, p.link as link, title  FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND content LIKE '%".mysql_real_escape_string($assignment->blog_post_url)."%' AND p.link LIKE '".mysql_real_escape_string($participant->blog_base)."%' AND !hidden ORDER BY date DESC";
+			if (1 == 2) {
+				$returned[$key] = array('state' => 3, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
+			    // CHECK IF POST IS MANUALLY CONECTED WITH ASSIGNMENT
+            } else if( $item = kalaSaba($query_link)) {
+	            $returned[$key] = array('state' => 2, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
             } else {
-                $query = "SELECT id, p.link as link, title FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND p.link LIKE '".mysql_real_escape_string($posts_url)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." AND !r.hidden ORDER BY date DESC";
+                $query = "SELECT id, p.link as link, title FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND p.link LIKE '".mysql_real_escape_string($participant->blog_base)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." AND !r.hidden ORDER BY date DESC";
                 $result = $db->query($query);
                 if( mysql_num_rows($result) ) {
                     $item = mysql_fetch_object($result);

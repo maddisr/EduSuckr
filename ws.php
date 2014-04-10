@@ -35,8 +35,9 @@
 	$server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('connectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('disconnectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
-	$server->register('connectCommentWithParticipant', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
-    
+	$server->register('connectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
+	$server->register('disconnectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
+	
 /* Auth check */
     function isAuthenticated() {
         if(isset($_SERVER['PHP_AUTH_USER']) and isset($_SERVER['PHP_AUTH_PW']) ) {
@@ -150,17 +151,26 @@
 	/* Function connectPostWithAssignment */
     function connectPostWithAssignment($course_guid, $post_id, $assignment_id) {
         global $db;
-        return $db->connectPostWithAssignment($course_guid, $post_id, $assignment_id);
+        return !isAuthenticated() ? 0 : $db->connectPostWithAssignment($course_guid, $post_id, $assignment_id);
     }
     /* Function disconnectPostWithAssignment */
     function disconnectPostWithAssignment($course_guid, $post_id) {
         global $db;
         return !isAuthenticated() ? 0 : $db->disconnectPostWithAssignment($course_guid, $post_id);
     }
-	 function connectCommentWithParticipant($course_guid, $post_id, $participant_id) {
+	
+	function connectCommentWithParticipant($course_guid, $comment_id, $participant_id) {
         global $db;
-        return $db->connectCommentWithParticipant($course_guid, $post_id, $participant_id);
+        return !isAuthenticated() ? 0 : $db->connectCommentWithParticipant($course_guid, $comment_id, $participant_id);
     }
+	
+	function disconnectCommentWithParticipant($course_guid, $comment_id, $participant_id) {
+        global $db;
+        return $db->disconnectCommentWithParticipant($course_guid, $comment_id, $participant_id);
+    }
+	
+	
+	
 	
 	
     $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';

@@ -65,10 +65,11 @@
 			// get posts from DB
 			global $db;
             $query_link = "SELECT id, p.link as link, title  FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND content LIKE '%".mysql_real_escape_string($assignment->blog_post_url)."%' AND p.link LIKE '".mysql_real_escape_string($participant->blog_base)."%' AND !hidden ORDER BY date DESC";
-			if (1 == 2) {
+			$query_manual = "SELECT id, p.link as link, title  FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND assignment_id =".$assignment->assignment_id." AND !hidden ORDER BY date DESC";
+			if ($item = getFirstResultOrFalse($query_manual)) {
 				$returned[$key] = array('state' => 3, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
 			    // CHECK IF POST IS MANUALLY CONECTED WITH ASSIGNMENT
-            } else if( $item = kalaSaba($query_link)) {
+            } else if( $item = getFirstResultOrFalse($query_link)) {
 	            $returned[$key] = array('state' => 2, 'link' => $item->link, 'title' => $item->title, 'id' => $item->id);
             } else {
                 $query = "SELECT id, p.link as link, title FROM ".DB_PREFIX."posts p LEFT JOIN ".DB_PREFIX."course_rels_posts r ON p.link=r.link WHERE course_guid=".$guid." AND p.link LIKE '".mysql_real_escape_string($participant->blog_base)."%' AND date>".$frame_start_ts." AND date<=".$frame_end_ts." AND !r.hidden ORDER BY date DESC";
@@ -79,7 +80,7 @@
                 } else {
                     $returned[$key] = array('state' => 0);    
                 }
-            }
+			}
 		}
 		return $returned;
 	}

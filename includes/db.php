@@ -162,11 +162,10 @@
             return serialize($comments);
 		}
 		
-		
 		function getParticipantComments($param) {
 			// Check in case base does not have slash in the end
 			$backup_base = preg_replace('{/$}', '', $param[1]);
-			$query = "SELECT DISTINCT id, c.link AS link, title, content, date, author, blogger_id, base FROM ".DB_PREFIX."posts c LEFT JOIN ".DB_PREFIX."course_rels_posts r ON c.link=r.link WHERE r.course_guid={$param[0]} AND !r.hidden AND (c.base='{$param[1]}' OR c.base='{$backup_base}') ORDER BY date DESC";
+			$query = "SELECT DISTINCT c.link AS link, base, title, date, content, author, blogger_id, post_id, post_author, id FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE r.course_guid={$param[0]} AND !r.hidden ORDER BY date DESC";
 			$result = $this->query($query);
             $comments = array();
             if($result && mysql_num_rows($result)) {
@@ -181,8 +180,8 @@
             }
             return serialize($comments);
 		}
-		
-        /**
+
+	   /**
          * Determines if a post is hidden within a course context.
          *
          * @param int    $course_guid Course unique identifier

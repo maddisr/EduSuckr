@@ -33,6 +33,7 @@
     $server->register('getHiddenPostsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getHiddenCommentsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
+	$server->register('getParticipantComments', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('connectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('disconnectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('connectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
@@ -74,6 +75,12 @@
 	function getParticipantPosts($param) {
 		global $db;
 		return $db->getParticipantPosts($param);
+	}
+	
+	/* Function getParticipantComments */
+	function getParticipantComments($param) {
+		global $db;
+		return $db->getParticipantComments($param);
 	}
     
     /* Function setEduCource */

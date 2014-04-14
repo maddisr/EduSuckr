@@ -24,7 +24,7 @@
     $server->register('getProgressTable', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getCourseLinkingConnections', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getCoursePosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
-    $server->register('getCourseComments', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
+    $server->register('getCourseComments', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getCoursePostById', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
     $server->register('hidePostById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
     $server->register('hideCommentById', array("param"=>"tns:Array"), array("result"=>"xsd:int"), WS_URL);
@@ -33,7 +33,7 @@
     $server->register('getHiddenPostsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getHiddenCommentsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
-	$server->register('getParticipantComments', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
+	$server->register('getParticipantComments', array("course_guid"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('connectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('disconnectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('connectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
@@ -78,9 +78,9 @@
 	}
 	
 	/* Function getParticipantComments */
-	function getParticipantComments($course_guid, $comment_id, $participant_id) {
+	function getParticipantComments($course_guid, $participant_id) {
 		global $db;
-		return $db->getParticipantComments($course_guid, $comment_id, $participant_id);
+		return $db->getParticipantComments($course_guid, $participant_id);
 	}
     
     /* Function setEduCource */

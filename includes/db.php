@@ -162,12 +162,12 @@
             return serialize($comments);
 		}
 		
-		function getParticipantComments($param) {
+		function getParticipantComments($course_guid, $id, $participant_id) {
 			// Check in case base does not have slash in the end
-			$backup_base = preg_replace('{/$}', '', $param[1]);
-			$query = "SELECT DISTINCT c.link AS link, base, title, date, content, author, blogger_id, post_id, post_author, id FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE r.course_guid={$param[0]} AND !r.hidden ORDER BY date DESC";
+			;
+			$query = "SELECT DISTINCT c.link AS link, base, title, date, content, author, blogger_id, post_id, post_author, id FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE r.course_guid={$param[0]} AND (c.base='{$backup_base}') AND !r.hidden ORDER BY date DESC";
 			$result = $this->query($query);
-            $comments = array();
+			$comments = array();
             if($result && mysql_num_rows($result)) {
                 while($comment = mysql_fetch_array($result)) {
                     if ($comment['blogger_id']) {

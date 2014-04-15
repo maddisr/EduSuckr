@@ -158,28 +158,29 @@
                     }
                     $comments []= $comment;
                 }
-            }
-            return serialize($comments);
+				return serialize($comments);
+			}
+            
 		}
 		
 		function getParticipantComments($course_guid, $participant_id) {
-			// Check in case base does not have slash in the end
-			
-			$query = "SELECT DISTINCT c.link AS link, base, title, date, content, author, blogger_id, post_id, post_author, id FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE r.course_guid=$course_guid AND r.participant_id=$participant_id AND !r.hidden ORDER BY date DESC";
+			$query = "SELECT DISTINCT id, c.link AS link, base, title, date, content, author, blogger_id, post_id, post_author FROM ".DB_PREFIX."comments c LEFT JOIN ".DB_PREFIX."course_rels_comments r ON c.link=r.link WHERE r.course_guid=$course_guid AND r.participant_id=participant_id AND !r.hidden ORDER BY date DESC";
 			$result = $this->query($query);
 			$comments = array();
 			if($result && mysql_num_rows($result)) {
-				while($comment = mysql_fetch_array($result)) {
-					if ($comment['blogger_id']) {
-						if ($fn = $this->getFullnameByBloggerId($comment['blogger_id'])) {
-							$comment['author'] = $fn;
-						}
-					}
-					$comments []= $comment;
-				}
+                while($comment = mysql_fetch_array($result)) {
+                    if ($comment['blogger_id']) {
+                        if ($fn = $this->getFullnameByBloggerId($comment['blogger_id'])) {
+                            $comment['author'] = $fn;
+                        }
+                    }
+                    $comments []= $comment;
+                }
+				return serialize($comments);
 			}
-			return serialize($comments);
+            
 		}
+			
 	   /**
          * Determines if a post is hidden within a course context.
          *

@@ -33,7 +33,7 @@
     $server->register('getHiddenPostsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
     $server->register('getHiddenCommentsByCourse', array("param"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('getParticipantPosts', array("param"=>"tns:Array"), array("result"=>"xsd:string"), WS_URL);
-	$server->register('getParticipantComments', array("course_guid"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
+	$server->register('getParticipantComments', array("course_guid"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:string"), WS_URL);
 	$server->register('connectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int", "assignment_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('disconnectPostWithAssignment', array("course_guid"=>"xsd:int", "post_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
 	$server->register('connectCommentWithParticipant', array("course_guid"=>"xsd:int", "comment_id"=>"xsd:int", "participant_id"=>"xsd:int"), array("result"=>"xsd:int"), WS_URL);
@@ -53,17 +53,17 @@
     /* Function getCoursePosts */
     function getCoursePosts($param) {
         global $db;
-        return $db->getCoursePosts($param);
+        return !isAuthenticated() ? 0 : $db->getCoursePosts($param);
     }
     /* Function getCourseComments */
     function getCourseComments($param) {
         global $db;
-        return $db->getCourseComments($param);
+        return !isAuthenticated() ? 0 : $db->getCourseComments($param);
     }
     /* Function getCoursePostById */
     function getCoursePostById($param) {
         global $db;
-        return $db->getCoursePostById((int)$param[0],(int)$param[1]);
+        return !isAuthenticated() ? 0 : $db ->getCoursePostById((int)$param[0],(int)$param[1]);
     }
     // Returns list of course IDs
     function listEduCources() {
@@ -74,13 +74,13 @@
 	/* Function getParticipantPosts */
 	function getParticipantPosts($param) {
 		global $db;
-		return $db->getParticipantPosts($param);
+		return !isAuthenticated() ? 0 : $db->getParticipantPosts($param);
 	}
 	
 	/* Function getParticipantComments */
 	function getParticipantComments($course_guid, $participant_id) {
 		global $db;
-		return $db->getParticipantComments($course_guid, $participant_id);
+		return !isAuthenticated() ? 0 : $db->getParticipantComments($course_guid, $participant_id);
 	}
     
     /* Function setEduCource */
@@ -146,13 +146,13 @@
     /* Function getHiddenPostsByCourse */
     function getHiddenPostsByCourse($course_guid) {
         global $db;
-        return $db->getHiddenByCourse($course_guid,"post");
+        return !isAuthenticated() ? 0 : $db->getHiddenByCourse($course_guid,"post");
     }
         
     /* Function getHiddenCommentsByCourse */
     function getHiddenCommentsByCourse($course_guid) {
         global $db;
-        return $db->getHiddenByCourse($course_guid,"comment");
+        return !isAuthenticated() ? 0 : $db->getHiddenByCourse($course_guid,"comment");
     }
 	
 	/* Function connectPostWithAssignment */
